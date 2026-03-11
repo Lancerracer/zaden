@@ -1,0 +1,1051 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Zaaiplan Moestuin</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#3d6b2e">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Zaaiplan">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f5f0e8;--paper:#fdfaf4;--ink:#2c2416;--ink-light:#7a6e5f;
+  --orange:#e8870a;--orange-pale:#fdecc8;--orange-light:#f5b84a;
+  --green:#3d6b2e;--green-pale:#d6eacc;--green-mid:#5a9e45;
+  --red:#c0392b;--grid:#c9bfad;--hover:#fff8ee;--blue:#2471a3;
+  --purple:#6b3fa0;--purple-pale:#ede0f7;--purple-mid:#8b5cc0;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);font-family:'DM Mono',monospace;color:var(--ink);min-height:100vh;}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:repeating-linear-gradient(0deg,transparent,transparent 27px,rgba(100,80,40,0.04) 27px,rgba(100,80,40,0.04) 28px);}
+.app{position:relative;z-index:1;max-width:1500px;margin:0 auto;padding:16px 12px;padding-bottom:80px;}
+header{display:flex;align-items:center;gap:12px;margin-bottom:10px;flex-wrap:wrap;}
+h1{font-family:'Playfair Display',serif;font-size:clamp(22px,5vw,40px);color:var(--green);letter-spacing:-1px;}
+.subtitle{font-size:11px;color:var(--ink-light);letter-spacing:.1em;text-transform:uppercase;}
+.header-actions{margin-left:auto;display:flex;gap:6px;align-items:center;}
+
+/* Save bar */
+.save-bar{background:var(--green);color:#fff;padding:8px 14px;border-radius:8px;margin-bottom:12px;
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:12px;}
+.save-bar.unsaved{background:#b85c00;}
+.save-btn{background:#fff;border:none;border-radius:5px;padding:6px 14px;font-family:'DM Mono',monospace;
+  font-size:12px;font-weight:500;cursor:pointer;margin-left:auto;color:var(--green);}
+.save-bar.unsaved .save-btn{color:#b85c00;}
+
+/* Toolbar */
+.toolbar{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;align-items:center;}
+.toolbar input{background:var(--paper);border:1.5px solid var(--grid);border-radius:4px;
+  padding:7px 10px;font-family:'DM Mono',monospace;font-size:12px;color:var(--ink);outline:none;flex:1;min-width:140px;}
+.toolbar input:focus{border-color:var(--orange);}
+.btn{background:var(--paper);border:1.5px solid var(--grid);border-radius:4px;padding:6px 12px;
+  font-family:'DM Mono',monospace;font-size:11px;color:var(--ink);cursor:pointer;transition:all .15s;white-space:nowrap;}
+.btn:hover{background:var(--hover);border-color:var(--orange);}
+.btn.primary{background:var(--green);color:#fff;border-color:var(--green);}
+.btn.primary:hover{background:#2d5020;}
+.btn.icon-btn{padding:6px 10px;font-size:16px;}
+.ai-badge{font-size:9px;background:var(--blue);color:#fff;border-radius:3px;padding:1px 5px;margin-left:4px;}
+.main-cat-tab{background:var(--paper);border:2px solid var(--grid);border-radius:8px;
+  padding:6px 14px;font-family:'DM Mono',monospace;font-size:12px;cursor:pointer;
+  color:var(--ink-light);transition:all .15s;font-weight:500;}
+.main-cat-tab:hover{background:var(--hover);}
+.main-cat-tab.active{background:var(--green);color:#fff;border-color:var(--green);}
+
+/* Category tabs */
+.cat-tabs{display:none;gap:4px;margin-bottom:10px;flex-wrap:wrap;overflow-x:auto;padding-bottom:4px;}
+.cat-tabs.visible{display:flex;}
+.cat-tab{background:var(--paper);border:1.5px solid var(--grid);border-radius:20px;
+  padding:4px 12px;font-family:'DM Mono',monospace;font-size:11px;cursor:pointer;
+  transition:all .15s;color:var(--ink-light);white-space:nowrap;}
+.cat-tab:hover,.cat-tab.active{background:var(--green-pale);border-color:var(--green);color:var(--green);}
+
+/* Filter pills */
+.filter-bar{display:flex;gap:5px;margin-bottom:10px;flex-wrap:wrap;align-items:center;}
+.filter-label{font-size:10px;color:var(--ink-light);letter-spacing:.08em;text-transform:uppercase;margin-right:2px;}
+.filter-pill{background:var(--paper);border:1.5px solid var(--grid);border-radius:16px;
+  padding:3px 8px;font-family:'DM Mono',monospace;font-size:10px;cursor:pointer;color:var(--ink-light);}
+.filter-pill:hover,.filter-pill.active{background:var(--orange-pale);border-color:var(--orange);color:var(--ink);}
+
+/* Legend */
+.legend{display:flex;gap:12px;margin-bottom:12px;align-items:center;flex-wrap:wrap;
+  background:var(--paper);padding:8px 12px;border-radius:8px;border:1.5px solid var(--grid);}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:11px;}
+.legend-dot{width:22px;height:14px;border-radius:3px;flex-shrink:0;}
+
+/* Table */
+.table-wrap{overflow-x:auto;background:var(--paper);border:1.5px solid var(--grid);
+  border-radius:8px;box-shadow:0 2px 12px rgba(0,0,0,0.06);}
+table{border-collapse:collapse;font-size:11px;min-width:100%;}
+thead th{padding:8px 3px;text-align:center;font-family:'DM Mono',monospace;font-weight:500;
+  font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-light);
+  border-bottom:2px solid var(--grid);white-space:nowrap;position:sticky;top:0;background:var(--paper);z-index:10;}
+thead th:first-child{text-align:left;padding-left:12px;min-width:160px;
+  position:sticky;left:0;z-index:20;border-right:1.5px solid var(--grid);}
+thead th.cur{color:var(--green);font-weight:700;}
+tr.cat-row td{background:#ede6d6;font-family:'Playfair Display',serif;font-size:11px;
+  font-style:italic;color:var(--ink-light);padding:4px 12px;border-bottom:1px solid var(--grid);}
+tr.plant-harvest{border-bottom:1px solid rgba(201,191,173,0.5);}
+tr.plant-sow:hover td,tr.plant-sow:hover+tr td,tr.plant-harvest:hover td{background:var(--hover);}
+td.pname{padding:3px 8px 3px 12px;white-space:nowrap;position:sticky;left:0;
+  background:var(--paper);border-right:1.5px solid var(--grid);z-index:5;vertical-align:middle;}
+.pname-wrap{display:flex;align-items:center;gap:4px;}
+.pname-btn{background:none;border:none;font-family:'DM Mono',monospace;font-size:12px;
+  color:var(--ink);cursor:pointer;text-align:left;padding:2px 4px;border-radius:3px;transition:background .1s;}
+.pname-btn:hover{background:var(--orange-pale);color:var(--orange);}
+.del-btn{opacity:0;background:none;border:none;cursor:pointer;color:var(--red);font-size:11px;padding:2px;flex-shrink:0;}
+tr:hover .del-btn{opacity:.5;}
+.del-btn:hover{opacity:1!important;}
+td.mcell{padding:2px;text-align:center;width:36px;min-width:36px;cursor:pointer;user-select:none;}
+.ci{width:30px;height:20px;border-radius:3px;margin:0 auto;transition:all .12s;}
+.ci.empty{background:transparent;}
+.ci.empty:hover{background:var(--orange-pale);outline:1.5px dashed var(--orange-light);}
+.ci.sow{background:var(--orange);}
+.ci.sow:hover{background:var(--red);}
+.ci.harvest{background:var(--green-mid);}
+.ci.harvest:hover{background:var(--red);}
+.ci.prune{background:var(--purple-mid);}
+.ci.prune:hover{background:var(--red);}
+.ci.empty.prow:hover{background:var(--purple-pale);outline:1.5px dashed var(--purple-mid);}
+.ci.empty.hrow:hover{background:var(--green-pale);outline:1.5px dashed var(--green-mid);}
+td.cur-col .ci.empty{background:rgba(61,107,46,0.04);}
+.ci.loading{background:linear-gradient(90deg,#eee 25%,#ddd 50%,#eee 75%);
+  background-size:200% 100%;animation:shimmer 1.2s infinite;}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+/* Quick add */
+.add-area{padding:10px 12px;display:flex;align-items:center;gap:6px;
+  border-top:1.5px dashed var(--grid);flex-wrap:wrap;}
+.add-area input{background:var(--bg);border:1.5px solid var(--grid);border-radius:4px;
+  padding:5px 8px;font-family:'DM Mono',monospace;font-size:11px;color:var(--ink);outline:none;flex:1;min-width:120px;}
+
+/* Stats */
+.stats{margin-top:10px;font-size:10px;color:var(--ink-light);display:flex;gap:14px;flex-wrap:wrap;}
+.stat strong{color:var(--ink);}
+
+/* Toast */
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);
+  background:var(--ink);color:#fff;padding:10px 18px;border-radius:8px;font-size:12px;
+  z-index:300;transition:transform .3s;pointer-events:none;white-space:nowrap;max-width:90vw;text-align:center;}
+#toast.show{transform:translateX(-50%) translateY(0);}
+
+/* Modals base */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(44,36,22,0.55);z-index:100;
+  align-items:center;justify-content:center;padding:16px;}
+.modal-overlay.open{display:flex;}
+.mbox{background:var(--paper);border-radius:12px;padding:22px;width:100%;max-width:440px;
+  box-shadow:0 8px 40px rgba(0,0,0,0.2);max-height:90vh;overflow-y:auto;}
+.mbox h2{font-family:'Playfair Display',serif;font-size:20px;margin-bottom:5px;color:var(--green);}
+.mbox .ai-note{font-size:11px;color:var(--blue);margin-bottom:14px;}
+.mbox label{font-size:11px;color:var(--ink-light);text-transform:uppercase;letter-spacing:.07em;}
+.mbox input,.mbox select{display:block;width:100%;margin:5px 0 12px;background:var(--bg);
+  border:1.5px solid var(--grid);border-radius:4px;padding:8px 10px;
+  font-family:'DM Mono',monospace;font-size:12px;color:var(--ink);outline:none;}
+.mbox .mrow{display:flex;gap:8px;justify-content:flex-end;align-items:center;margin-top:4px;}
+.mbox .mstatus{font-size:11px;color:var(--blue);flex:1;}
+
+/* Plant info modal */
+#infoModal .mbox{max-width:520px;}
+.info-header{display:flex;align-items:baseline;gap:10px;margin-bottom:14px;flex-wrap:wrap;}
+.info-name{font-family:'Playfair Display',serif;font-size:24px;color:var(--green);}
+.info-cat{font-size:11px;color:var(--ink-light);background:#ede6d6;padding:2px 8px;border-radius:10px;}
+.info-calendar{display:grid;grid-template-columns:auto 1fr;gap:6px 10px;margin-bottom:16px;align-items:center;}
+.info-cal-label{font-size:10px;color:var(--ink-light);text-transform:uppercase;letter-spacing:.07em;}
+.info-months{display:flex;gap:3px;}
+.info-month{width:24px;height:16px;border-radius:3px;font-size:8px;display:flex;align-items:center;
+  justify-content:center;color:rgba(255,255,255,0.9);font-weight:500;}
+.info-month.active-sow{background:var(--orange);}
+.info-month.active-harvest{background:var(--green-mid);}
+.info-month.inactive{background:#e8e0d0;color:var(--ink-light);}
+.info-tips{background:#f0ebe0;border-radius:8px;padding:14px;font-size:12px;line-height:1.7;color:var(--ink);}
+.info-tips h3{font-family:'Playfair Display',serif;font-size:14px;color:var(--green);margin-bottom:8px;}
+.info-tips-loading{display:flex;align-items:center;gap:8px;color:var(--ink-light);font-size:12px;padding:10px 0;}
+.info-tips-loading::before{content:'';display:inline-block;width:16px;height:16px;
+  border:2px solid var(--green-pale);border-top-color:var(--green);border-radius:50%;animation:spin .8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Settings modal */
+#settingsModal .mbox{max-width:480px;}
+.setting-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;
+  border-bottom:1px solid var(--grid);}
+.setting-row:last-of-type{border-bottom:none;}
+.setting-label{font-size:12px;color:var(--ink);}
+.setting-desc{font-size:10px;color:var(--ink-light);margin-top:2px;}
+.toggle{position:relative;width:40px;height:22px;flex-shrink:0;}
+.toggle input{opacity:0;width:0;height:0;}
+.toggle-slider{position:absolute;inset:0;background:#ccc;border-radius:11px;cursor:pointer;transition:.3s;}
+.toggle-slider:before{content:'';position:absolute;width:16px;height:16px;left:3px;top:3px;
+  background:#fff;border-radius:50%;transition:.3s;}
+.toggle input:checked+.toggle-slider{background:var(--green);}
+.toggle input:checked+.toggle-slider:before{transform:translateX(18px);}
+
+/* AI settings */
+.ai-help-box{font-size:11px;color:var(--ink-light);background:#f0ebe0;padding:8px 10px;
+  border-radius:5px;margin-bottom:12px;line-height:1.8;}
+.warn-box{font-size:11px;color:#b85c00;background:#fff3dc;padding:8px 10px;border-radius:5px;margin-bottom:14px;}
+
+/* Responsive */
+@media(max-width:480px){
+  .app{padding:10px 8px;padding-bottom:80px;}
+  .add-area input{width:100%;}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <h1>🌱 Zaaiplan</h1>
+    <span class="subtitle">Moestuin 2025</span>
+    <div class="header-actions">
+      <button class="btn icon-btn" onclick="showSettings()" title="Instellingen">⚙️</button>
+    </div>
+  </header>
+
+  <div class="save-bar" id="saveBar">
+    <span id="saveMsg">💾 Klaar om te delen!</span>
+    <button class="save-btn" onclick="saveToFile()">⬇ Opslaan als bestand</button>
+  </div>
+
+  <div class="toolbar">
+    <input type="text" id="searchInput" placeholder="Zoek gewas..." oninput="renderView()">
+    <button class="btn primary" onclick="showAddModal()">+ Toevoegen <span class="ai-badge">AI</span></button>
+    <button class="btn" id="aiSettingsBtn" onclick="showAISettings()">🤖 AI</button>
+  </div>
+
+  <!-- Main category tabs (always visible) -->
+  <div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;" id="mainCatTabs">
+    <button class="main-cat-tab active" onclick="setMainCat('Alle',this)">🌿 Alles</button>
+    <button class="main-cat-tab" onclick="setMainCat('Moestuin',this)">🥕 Moestuin</button>
+    <button class="main-cat-tab" onclick="setMainCat('Kruidentuin',this)">🌿 Kruidentuin</button>
+    <button class="main-cat-tab" onclick="setMainCat('Boomgaard',this)">🍎 Boomgaard</button>
+  </div>
+
+  <!-- Sub-category tabs (shown when tabmode is on) -->
+  <div class="cat-tabs" id="catTabs"></div>
+
+  <!-- Month filter -->
+  <div class="filter-bar" id="filterBar">
+    <span class="filter-label">Maand:</span>
+    <button class="filter-pill active" onclick="setFilter(null,this)">Alle</button>
+    <button class="filter-pill" onclick="setFilter(0,this)">Jan</button>
+    <button class="filter-pill" onclick="setFilter(1,this)">Feb</button>
+    <button class="filter-pill" onclick="setFilter(2,this)">Mrt</button>
+    <button class="filter-pill" onclick="setFilter(3,this)">Apr</button>
+    <button class="filter-pill" onclick="setFilter(4,this)">Mei</button>
+    <button class="filter-pill" onclick="setFilter(5,this)">Jun</button>
+    <button class="filter-pill" onclick="setFilter(6,this)">Jul</button>
+    <button class="filter-pill" onclick="setFilter(7,this)">Aug</button>
+    <button class="filter-pill" onclick="setFilter(8,this)">Sep</button>
+    <button class="filter-pill" onclick="setFilter(9,this)">Okt</button>
+    <button class="filter-pill" onclick="setFilter(10,this)">Nov</button>
+    <button class="filter-pill" onclick="setFilter(11,this)">Dec</button>
+  </div>
+
+  <div class="legend">
+    <strong style="font-size:11px">Legenda:</strong>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--orange)"></div>Zaaien / Planten</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--green-mid)"></div>Oogsten</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--purple-mid)"></div>Snoeien</div>
+    <span style="font-size:10px;color:var(--ink-light)">· Naam = meer info · Cellen = aan/uit</span>
+  </div>
+
+  <div class="table-wrap">
+    <table><thead><tr id="hdr"></tr></thead><tbody id="tbody"></tbody></table>
+    <div class="add-area">
+      <input type="text" id="qaInput" placeholder="Snel gewas toevoegen..." onkeydown="if(event.key==='Enter')quickAdd()">
+      <button class="btn primary" id="qaBtn" onclick="quickAdd()">+ <span class="ai-badge">AI</span></button>
+    </div>
+  </div>
+  <div class="stats" id="stats"></div>
+</div>
+
+<div id="toast"></div>
+
+<!-- Add plant modal -->
+<div class="modal-overlay" id="addModal" onclick="if(event.target===this)closeAddModal()">
+  <div class="mbox">
+    <h2>Gewas toevoegen</h2>
+    <p class="ai-note">✨ AI zoekt automatisch de zaai- en oogsttijden op.</p>
+    <label>Naam van het gewas</label>
+    <input id="mName" type="text" placeholder="bv. Pompoen, Basilicum...">
+    <label>Categorie (optioneel)</label>
+    <input id="mCat" type="text" list="catList" placeholder="bv. Tomaten, Kruiden...">
+    <datalist id="catList"></datalist>
+    <div class="mrow">
+      <span class="mstatus" id="mStatus"></span>
+      <button class="btn" id="mCancelBtn" onclick="closeAddModal()">Annuleer</button>
+      <button class="btn primary" id="mAddBtn" onclick="addFromModal()">Toevoegen</button>
+    </div>
+  </div>
+</div>
+
+<!-- Plant info modal -->
+<div class="modal-overlay" id="infoModal" onclick="if(event.target===this)closeInfoModal()">
+  <div class="mbox">
+    <div class="info-header">
+      <span class="info-name" id="infoName"></span>
+      <span class="info-cat" id="infoCat"></span>
+    </div>
+    <div class="info-calendar" id="infoCalendar">
+      <span class="info-cal-label" id="infoSowLabel">Zaaien</span>
+      <div class="info-months" id="infoSowMonths"></div>
+      <span class="info-cal-label" id="infoPruneLabel" style="display:none">Snoeien</span>
+      <div class="info-months" id="infoPruneMonths" style="display:none"></div>
+      <span class="info-cal-label">Oogsten</span>
+      <div class="info-months" id="infoHarvestMonths"></div>
+    </div>
+    <div class="info-tips" id="infoTips">
+      <div class="info-tips-loading">AI tips worden geladen...</div>
+    </div>
+    <div class="mrow" style="margin-top:14px">
+      <button class="btn" onclick="refreshInfoTips()">🔄 Opnieuw laden</button>
+      <button class="btn primary" onclick="closeInfoModal()">Sluiten</button>
+    </div>
+  </div>
+</div>
+
+<!-- Settings modal -->
+<div class="modal-overlay" id="settingsModal" onclick="if(event.target===this)closeSettings()">
+  <div class="mbox">
+    <h2>⚙️ Instellingen</h2>
+    <br>
+    <div class="setting-row">
+      <div>
+        <div class="setting-label">Categorietabbladen</div>
+        <div class="setting-desc">Toon gewassen per categorie in aparte tabbladen</div>
+      </div>
+      <label class="toggle">
+        <input type="checkbox" id="toggleTabMode" onchange="setTabMode(this.checked)">
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+    <div class="setting-row">
+      <div>
+        <div class="setting-label">Automatisch opslaan</div>
+        <div class="setting-desc">Sla wijzigingen automatisch op in de browser</div>
+      </div>
+      <label class="toggle">
+        <input type="checkbox" id="toggleAutoSave" onchange="setAutoSave(this.checked)">
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+    <br>
+    <div class="mrow">
+      <button class="btn primary" onclick="closeSettings()">Sluiten</button>
+    </div>
+  </div>
+</div>
+
+<!-- AI settings modal -->
+<div class="modal-overlay" id="aiModal" onclick="if(event.target===this)closeAISettings()">
+  <div class="mbox" style="max-width:520px">
+    <h2>🤖 AI koppelen</h2>
+    <p style="font-size:11px;color:var(--ink-light);margin-bottom:14px">Kies een AI-dienst en volg de stappen om hem te koppelen. De makkelijkste en gratis optie is <strong>Gemini van Google</strong>.</p>
+
+    <label>Stap 1 — Kies een AI</label>
+    <select id="aiProvider" onchange="updateProviderHelp()" style="margin-bottom:0">
+      <option value="gemini">⭐ Gemini (Google) — gratis &amp; makkelijkst</option>
+      <option value="claude">Claude (Anthropic)</option>
+      <option value="openai">ChatGPT (OpenAI)</option>
+      <option value="openrouter">OpenRouter (100+ modellen)</option>
+    </select>
+
+    <div id="aiHelp" style="margin-top:10px;margin-bottom:14px"></div>
+
+    <label>Stap 3 — Plak je sleutel hier</label>
+    <div style="position:relative">
+      <input id="aiKey" type="password" placeholder="Plak hier je sleutel..." style="padding-right:70px">
+      <button onclick="toggleKeyVisible()" id="toggleKeyBtn"
+        style="position:absolute;right:6px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:11px;color:var(--ink-light)">toon</button>
+    </div>
+
+    <label style="margin-top:4px">Model (optioneel — laat leeg voor standaard)</label>
+    <input id="aiModel" type="text" placeholder="">
+
+    <div style="font-size:11px;color:#b85c00;background:#fff3dc;padding:8px 10px;border-radius:5px;margin-bottom:14px">
+      ⚠️ Je sleutel wordt opgeslagen in het bestand. Sla het bestand op en deel het niet met anderen.
+    </div>
+
+    <div class="mrow">
+      <button class="btn" onclick="closeAISettings()">Annuleer</button>
+      <button class="btn primary" onclick="saveAISettings()">✓ Opslaan</button>
+    </div>
+  </div>
+</div>
+
+<script id="dataScript">
+// DATA_START
+var SAVED_DATA = [
+  // ── Wortels & Knollen ──────────────────────────────────────
+  {"id":1,"name":"Zomerwortel","cat":"Wortels & Knollen","mainCat":"Moestuin","sow":[2,3,4,5,6],"harvest":[6,7,8,9]},
+  {"id":2,"name":"Winterwortel","cat":"Wortels & Knollen","mainCat":"Moestuin","sow":[3,4,5],"harvest":[8,9,10,11]},
+  {"id":3,"name":"Regenboogwortel","cat":"Wortels & Knollen","mainCat":"Moestuin","sow":[3,4,5],"harvest":[8,9,10]},
+  {"id":4,"name":"Rode biet","cat":"Wortels & Knollen","mainCat":"Moestuin","sow":[3,4,5,6],"harvest":[7,8,9,10]},
+  {"id":43,"name":"Aardappel","cat":"Wortels & Knollen","mainCat":"Moestuin","sow":[3,4],"harvest":[7,8,9]},
+  {"id":44,"name":"Pastinaak","cat":"Wortels & Knollen","mainCat":"Moestuin","sow":[3,4],"harvest":[9,10,11,0]},
+  {"id":45,"name":"Knolselderij","cat":"Wortels & Knollen","mainCat":"Moestuin","sow":[1,2,3],"harvest":[9,10,11]},
+  {"id":46,"name":"Radijs","cat":"Wortels & Knollen","mainCat":"Moestuin","sow":[3,4,5,6,7,8],"harvest":[4,5,6,7,8,9]},
+  {"id":47,"name":"Rammenas","cat":"Wortels & Knollen","mainCat":"Moestuin","sow":[6,7,8],"harvest":[9,10,11]},
+  {"id":48,"name":"Knolraap","cat":"Wortels & Knollen","mainCat":"Moestuin","sow":[3,4,7,8],"harvest":[6,7,9,10,11]},
+  // ── Koolsoorten ────────────────────────────────────────────
+  {"id":5,"name":"Spruitjes","cat":"Koolsoorten","mainCat":"Moestuin","sow":[2,3,4],"harvest":[10,11,0]},
+  {"id":6,"name":"Bloemkool","cat":"Koolsoorten","mainCat":"Moestuin","sow":[1,2,3,4,5],"harvest":[7,8,9,10]},
+  {"id":7,"name":"Broccoli","cat":"Koolsoorten","mainCat":"Moestuin","sow":[2,3,4,5],"harvest":[7,8,9,10]},
+  {"id":8,"name":"Paarse bloemkool","cat":"Koolsoorten","mainCat":"Moestuin","sow":[2,3,4,5],"harvest":[8,9,10]},
+  {"id":9,"name":"Boerenkool","cat":"Koolsoorten","mainCat":"Moestuin","sow":[3,4,5],"harvest":[10,11,0,1]},
+  {"id":49,"name":"Wittekool","cat":"Koolsoorten","mainCat":"Moestuin","sow":[1,2,3,4],"harvest":[8,9,10]},
+  {"id":50,"name":"Rodekool","cat":"Koolsoorten","mainCat":"Moestuin","sow":[1,2,3,4],"harvest":[9,10,11]},
+  {"id":51,"name":"Savooiekool","cat":"Koolsoorten","mainCat":"Moestuin","sow":[1,2,3,4],"harvest":[8,9,10,11]},
+  {"id":52,"name":"Chinese kool","cat":"Koolsoorten","mainCat":"Moestuin","sow":[6,7,8],"harvest":[9,10,11]},
+  {"id":53,"name":"Koolrabi","cat":"Koolsoorten","mainCat":"Moestuin","sow":[3,4,5,6,7],"harvest":[6,7,8,9]},
+  {"id":54,"name":"Paksoi","cat":"Koolsoorten","mainCat":"Moestuin","sow":[3,4,5,6,7,8],"harvest":[5,6,7,8,9,10]},
+  {"id":55,"name":"Raapstelen","cat":"Koolsoorten","mainCat":"Moestuin","sow":[3,4,7,8,9],"harvest":[5,6,9,10,11]},
+  {"id":56,"name":"Rucola","cat":"Koolsoorten","mainCat":"Moestuin","sow":[3,4,5,6,7,8],"harvest":[5,6,7,8,9]},
+  // ── Tomaten (voorzaaien binnen, buiten pas na 15 mei Drenthe) ──
+  {"id":10,"name":"Trostomaat","cat":"Tomaten","mainCat":"Moestuin","sow":[1,2,3],"harvest":[7,8,9]},
+  {"id":11,"name":"Vleestomaat","cat":"Tomaten","mainCat":"Moestuin","sow":[1,2,3],"harvest":[7,8,9]},
+  {"id":12,"name":"Tomaat","cat":"Tomaten","mainCat":"Moestuin","sow":[1,2,3],"harvest":[7,8,9]},
+  {"id":13,"name":"Kerstomaat","cat":"Tomaten","mainCat":"Moestuin","sow":[1,2,3],"harvest":[7,8,9]},
+  {"id":14,"name":"Houseband tomaat","cat":"Tomaten","mainCat":"Moestuin","sow":[1,2,3],"harvest":[7,8,9]},
+  // ── Komkommer & Co (vorstgevoelig, later uitplanten in Drenthe) ──
+  {"id":15,"name":"Augurk inmaak","cat":"Komkommer & Co","mainCat":"Moestuin","sow":[3,4],"harvest":[7,8,9]},
+  {"id":16,"name":"Komkommer","cat":"Komkommer & Co","mainCat":"Moestuin","sow":[3,4],"harvest":[7,8,9]},
+  {"id":17,"name":"Courgette","cat":"Komkommer & Co","mainCat":"Moestuin","sow":[3,4],"harvest":[6,7,8,9]},
+  {"id":18,"name":"Augurk","cat":"Komkommer & Co","mainCat":"Moestuin","sow":[3,4],"harvest":[7,8,9]},
+  {"id":19,"name":"Watermeloen","cat":"Komkommer & Co","mainCat":"Moestuin","sow":[3,4],"harvest":[8,9]},
+  {"id":20,"name":"Meloen galia","cat":"Komkommer & Co","mainCat":"Moestuin","sow":[3,4],"harvest":[8,9]},
+  {"id":57,"name":"Pompoen","cat":"Komkommer & Co","mainCat":"Moestuin","sow":[3,4],"harvest":[9,10]},
+  {"id":58,"name":"Suikermaïs","cat":"Komkommer & Co","mainCat":"Moestuin","sow":[4,5],"harvest":[8,9]},
+  // ── Paprika & Peper (vroeg voorzaaien binnen) ──────────────
+  {"id":21,"name":"Paprika","cat":"Paprika & Peper","mainCat":"Moestuin","sow":[0,1,2],"harvest":[8,9,10]},
+  {"id":22,"name":"Peper","cat":"Paprika & Peper","mainCat":"Moestuin","sow":[0,1,2],"harvest":[8,9,10]},
+  {"id":59,"name":"Chilipeper","cat":"Paprika & Peper","mainCat":"Moestuin","sow":[0,1,2],"harvest":[8,9,10]},
+  {"id":60,"name":"Aubergine","cat":"Paprika & Peper","mainCat":"Moestuin","sow":[0,1,2],"harvest":[8,9]},
+  // ── Bonen (na nachtvorst, in Drenthe voorzichtig na half mei) ──
+  {"id":23,"name":"Stokboon","cat":"Bonen","mainCat":"Moestuin","sow":[4,5,6],"harvest":[7,8,9]},
+  {"id":24,"name":"Tuinboon","cat":"Bonen","mainCat":"Moestuin","sow":[2,3],"harvest":[6,7]},
+  {"id":25,"name":"French beans","cat":"Bonen","mainCat":"Moestuin","sow":[4,5,6],"harvest":[7,8,9]},
+  {"id":26,"name":"Stamslaboon","cat":"Bonen","mainCat":"Moestuin","sow":[4,5,6],"harvest":[7,8,9]},
+  {"id":27,"name":"Stokspekboon","cat":"Bonen","mainCat":"Moestuin","sow":[4,5,6],"harvest":[7,8,9]},
+  {"id":28,"name":"Haricot nains","cat":"Bonen","mainCat":"Moestuin","sow":[4,5,6],"harvest":[7,8,9]},
+  {"id":29,"name":"Pronkboon","cat":"Bonen","mainCat":"Moestuin","sow":[4,5],"harvest":[7,8,9]},
+  // ── Bladgroenten ───────────────────────────────────────────
+  {"id":30,"name":"N.T. Spinazie","cat":"Bladgroenten","mainCat":"Moestuin","sow":[2,3,4,5,6,7],"harvest":[4,5,6,7,8,9]},
+  {"id":31,"name":"Spinazie reuzenblad","cat":"Bladgroenten","mainCat":"Moestuin","sow":[2,3,4,5,6,7],"harvest":[4,5,6,7,8,9]},
+  {"id":32,"name":"Andijvie","cat":"Bladgroenten","mainCat":"Moestuin","sow":[3,4,5,6,7],"harvest":[6,7,8,9,10]},
+  {"id":61,"name":"Snijbiet","cat":"Bladgroenten","mainCat":"Moestuin","sow":[3,4,5,6],"harvest":[6,7,8,9,10]},
+  {"id":62,"name":"IJsbergsla","cat":"Bladgroenten","mainCat":"Moestuin","sow":[2,3,4,5,6],"harvest":[5,6,7,8,9]},
+  {"id":63,"name":"Veldsla","cat":"Bladgroenten","mainCat":"Moestuin","sow":[3,4,7,8,9],"harvest":[5,6,9,10,11]},
+  {"id":64,"name":"Sla (snijsla)","cat":"Bladgroenten","mainCat":"Moestuin","sow":[2,3,4,5,6,7],"harvest":[4,5,6,7,8,9]},
+  {"id":65,"name":"Radicchio","cat":"Bladgroenten","mainCat":"Moestuin","sow":[4,5,6,7],"harvest":[8,9,10,11]},
+  // ── Erwten ─────────────────────────────────────────────────
+  {"id":33,"name":"Peulen sugar peas","cat":"Erwten","mainCat":"Moestuin","sow":[3,4,5],"harvest":[6,7,8]},
+  {"id":34,"name":"Garden pea","cat":"Erwten","mainCat":"Moestuin","sow":[3,4,5],"harvest":[6,7,8]},
+  // ── Ui-achtigen ────────────────────────────────────────────
+  {"id":66,"name":"Zaaiui","cat":"Ui-achtigen","mainCat":"Moestuin","sow":[2,3,4],"harvest":[7,8,9]},
+  {"id":67,"name":"Plantui","cat":"Ui-achtigen","mainCat":"Moestuin","sow":[3,4],"harvest":[7,8,9]},
+  {"id":68,"name":"Knoflook","cat":"Ui-achtigen","mainCat":"Moestuin","sow":[9,10,11],"harvest":[6,7]},
+  {"id":69,"name":"Sjalot","cat":"Ui-achtigen","mainCat":"Moestuin","sow":[2,3],"harvest":[7,8]},
+  {"id":70,"name":"Bosui","cat":"Ui-achtigen","mainCat":"Moestuin","sow":[3,4,5,6,7],"harvest":[5,6,7,8,9]},
+  {"id":71,"name":"Bieslook","cat":"Ui-achtigen","mainCat":"Moestuin","sow":[2,3,4],"harvest":[4,5,6,7,8,9,10]},
+  // ── Overig Groenten ────────────────────────────────────────
+  {"id":35,"name":"Aardbei","cat":"Overig Groenten","mainCat":"Moestuin","sow":[1,2],"harvest":[6,7,8]},
+  {"id":36,"name":"Prei","cat":"Overig Groenten","mainCat":"Moestuin","sow":[1,2,3],"harvest":[8,9,10,11,0]},
+  {"id":37,"name":"Snijboon","cat":"Overig Groenten","mainCat":"Moestuin","sow":[4,5],"harvest":[7,8,9]},
+  {"id":72,"name":"Rabarber","cat":"Overig Groenten","mainCat":"Moestuin","sow":[1,2],"harvest":[4,5,6,7]},
+  {"id":73,"name":"Asperge","cat":"Overig Groenten","mainCat":"Moestuin","sow":[2,3],"harvest":[4,5,6]},
+  {"id":74,"name":"Artisjok","cat":"Overig Groenten","mainCat":"Moestuin","sow":[2,3],"harvest":[7,8,9]},
+  {"id":75,"name":"Bleekselderij","cat":"Overig Groenten","mainCat":"Moestuin","sow":[1,2,3],"harvest":[8,9,10]},
+  {"id":76,"name":"Venkel","cat":"Overig Groenten","mainCat":"Moestuin","sow":[4,5,6],"harvest":[8,9,10]},
+  // ── Kruiden ────────────────────────────────────────────────
+  {"id":38,"name":"Mosterd","cat":"Kruiden","mainCat":"Kruidentuin","sow":[3,4,5,6,7],"harvest":[5,6,7,8,9]},
+  {"id":40,"name":"Peterselie","cat":"Kruiden","mainCat":"Kruidentuin","sow":[2,3,4,5,6],"harvest":[5,6,7,8,9,10]},
+  {"id":41,"name":"Mint","cat":"Kruiden","mainCat":"Kruidentuin","sow":[2,3,4],"harvest":[5,6,7,8,9,10]},
+  {"id":42,"name":"Basilicum","cat":"Kruiden","mainCat":"Kruidentuin","sow":[2,3,4],"harvest":[6,7,8,9]},
+  {"id":77,"name":"Dille","cat":"Kruiden","mainCat":"Kruidentuin","sow":[3,4,5,6,7],"harvest":[6,7,8,9]},
+  {"id":78,"name":"Koriander","cat":"Kruiden","mainCat":"Kruidentuin","sow":[4,5,6,7],"harvest":[6,7,8,9]},
+  {"id":79,"name":"Tijm","cat":"Kruiden","mainCat":"Kruidentuin","sow":[2,3,4],"harvest":[5,6,7,8,9,10]},
+  {"id":80,"name":"Rozemarijn","cat":"Kruiden","mainCat":"Kruidentuin","sow":[2,3,4],"harvest":[4,5,6,7,8,9,10,11]},
+  {"id":81,"name":"Salie","cat":"Kruiden","mainCat":"Kruidentuin","sow":[2,3,4],"harvest":[5,6,7,8,9,10]},
+  {"id":82,"name":"Oregano","cat":"Kruiden","mainCat":"Kruidentuin","sow":[2,3,4],"harvest":[5,6,7,8,9]},
+  {"id":83,"name":"Lavendel","cat":"Kruiden","mainCat":"Kruidentuin","sow":[1,2,3],"harvest":[6,7,8]},
+  {"id":84,"name":"Citroenmelisse","cat":"Kruiden","mainCat":"Kruidentuin","sow":[2,3,4],"harvest":[5,6,7,8,9,10]},
+  {"id":85,"name":"Kamille","cat":"Kruiden","mainCat":"Kruidentuin","sow":[3,4,5],"harvest":[6,7,8,9]},
+  {"id":86,"name":"Kervel","cat":"Kruiden","mainCat":"Kruidentuin","sow":[3,4,7,8],"harvest":[5,6,8,9,10]},
+  {"id":87,"name":"Dragon","cat":"Kruiden","mainCat":"Kruidentuin","sow":[2,3,4],"harvest":[5,6,7,8,9,10]},
+  {"id":88,"name":"Snijselderij","cat":"Kruiden","mainCat":"Kruidentuin","sow":[1,2,3],"harvest":[6,7,8,9,10]},
+  // ── Bloemen ────────────────────────────────────────────────
+  {"id":39,"name":"IJsbegonia","cat":"Bloemen","mainCat":"Moestuin","sow":[1,2,3],"harvest":[6,7,8,9,10]},
+  {"id":89,"name":"Afrikaantje (Tagetes)","cat":"Bloemen","mainCat":"Moestuin","sow":[3,4],"harvest":[6,7,8,9,10]},
+  {"id":90,"name":"Goudsbloem (Calendula)","cat":"Bloemen","mainCat":"Moestuin","sow":[3,4,7,8],"harvest":[6,7,8,9,10]},
+  {"id":91,"name":"Zonnebloem","cat":"Bloemen","mainCat":"Moestuin","sow":[3,4,5],"harvest":[8,9,10]},
+  {"id":92,"name":"Nasturtium (Oost-Indische kers)","cat":"Bloemen","mainCat":"Moestuin","sow":[4,5],"harvest":[6,7,8,9,10]},
+  {"id":93,"name":"Borage (komkommerkruid)","cat":"Bloemen","mainCat":"Moestuin","sow":[4,5,6],"harvest":[6,7,8,9,10]},
+  // ══ BOOMGAARD ══════════════════════════════════════════════
+  // ── Zachte vruchten / Bessen ───────────────────────────────
+  {"id":200,"name":"Framboos (zomer)","cat":"Bessen & Frambozen","mainCat":"Boomgaard","sow":[10,11,2,3],"prune":[1,2,8],"harvest":[6,7,8]},
+  {"id":201,"name":"Framboos (herfst)","cat":"Bessen & Frambozen","mainCat":"Boomgaard","sow":[10,11,2,3],"prune":[1,2],"harvest":[8,9,10]},
+  {"id":202,"name":"Braam","cat":"Bessen & Frambozen","mainCat":"Boomgaard","sow":[10,11,2,3],"prune":[1,2],"harvest":[7,8,9]},
+  {"id":203,"name":"Rode aalbes","cat":"Bessen & Frambozen","mainCat":"Boomgaard","sow":[10,11,2,3],"prune":[0,1,7,8],"harvest":[6,7]},
+  {"id":204,"name":"Witte aalbes","cat":"Bessen & Frambozen","mainCat":"Boomgaard","sow":[10,11,2,3],"prune":[0,1,7,8],"harvest":[6,7]},
+  {"id":205,"name":"Zwarte aalbes","cat":"Bessen & Frambozen","mainCat":"Boomgaard","sow":[10,11,2,3],"prune":[7,8],"harvest":[6,7]},
+  {"id":206,"name":"Kruisbes","cat":"Bessen & Frambozen","mainCat":"Boomgaard","sow":[10,11,2,3],"prune":[0,1,7,8],"harvest":[6,7]},
+  {"id":207,"name":"Blauwe bes","cat":"Bessen & Frambozen","mainCat":"Boomgaard","sow":[10,11,2,3],"prune":[1,2],"harvest":[7,8]},
+  {"id":208,"name":"Bosaardbei","cat":"Bessen & Frambozen","mainCat":"Boomgaard","sow":[2,3,7,8],"prune":[],"harvest":[5,6,7,8]},
+  // ── Klimplanten ────────────────────────────────────────────
+  {"id":209,"name":"Druif","cat":"Klimplanten","mainCat":"Boomgaard","sow":[2,3,10,11],"prune":[0,1],"harvest":[8,9,10]},
+  {"id":210,"name":"Kiwi","cat":"Klimplanten","mainCat":"Boomgaard","sow":[2,3,10,11],"prune":[0,1,7],"harvest":[9,10]},
+  // ── Fruitbomen ─────────────────────────────────────────────
+  {"id":211,"name":"Appel","cat":"Fruitbomen","mainCat":"Boomgaard","sow":[10,11,2,3],"prune":[0,1,2],"harvest":[8,9,10]},
+  {"id":212,"name":"Peer","cat":"Fruitbomen","mainCat":"Boomgaard","sow":[10,11,2,3],"prune":[0,1,2],"harvest":[8,9,10]},
+  {"id":213,"name":"Pruim","cat":"Fruitbomen","mainCat":"Boomgaard","sow":[10,11,2,3],"prune":[3,4],"harvest":[7,8,9]},
+  {"id":214,"name":"Kers (zoet)","cat":"Fruitbomen","mainCat":"Boomgaard","sow":[10,11,2,3],"prune":[5,6,7],"harvest":[6,7]},
+  {"id":215,"name":"Kers (zuur)","cat":"Fruitbomen","mainCat":"Boomgaard","sow":[10,11,2,3],"prune":[5,6,7],"harvest":[6,7,8]},
+  {"id":216,"name":"Kwee","cat":"Fruitbomen","mainCat":"Boomgaard","sow":[10,11,2,3],"prune":[0,1,2],"harvest":[9,10,11]},
+  {"id":217,"name":"Vlierbes","cat":"Fruitbomen","mainCat":"Boomgaard","sow":[10,11,2,3],"prune":[1,2],"harvest":[8,9]},
+  {"id":218,"name":"Vijg","cat":"Fruitbomen","mainCat":"Boomgaard","sow":[2,3,10,11],"prune":[2,3],"harvest":[8,9,10]},
+  // ── Noten ──────────────────────────────────────────────────
+  {"id":219,"name":"Walnoot","cat":"Noten","mainCat":"Boomgaard","sow":[10,11],"prune":[5,6],"harvest":[9,10]},
+  {"id":220,"name":"Hazelnoot","cat":"Noten","mainCat":"Boomgaard","sow":[10,11],"prune":[1,2],"harvest":[8,9]}
+];
+var SAVED_NEXT_ID = 221;
+// DATA_END
+// AI_CONFIG_START
+var SAVED_AI_CONFIG = {"provider":"","apiKey":"","model":""};
+// AI_CONFIG_END
+// SETTINGS_START
+var SAVED_SETTINGS = {"tabMode":false,"autoSave":true};
+// SETTINGS_END
+</script>
+
+<script>
+const MO=['jan','feb','mrt','apr','mei','jun','jul','aug','sep','okt','nov','dec'];
+const MF=['Januari','Februari','Maart','April','Mei','Juni','Juli','Augustus','September','Oktober','November','December'];
+const CUR = new Date().getMonth();
+
+let data = JSON.parse(JSON.stringify(SAVED_DATA));
+let nextId = SAVED_NEXT_ID;
+let filterM = null;
+let activeCat = 'Alle';
+let activeMainCat = 'Alle';
+let settings = Object.assign({tabMode:false,autoSave:true}, typeof SAVED_SETTINGS!=='undefined' ? SAVED_SETTINGS : {});
+let AI_CONFIG = Object.assign({provider:'',apiKey:'',model:''}, typeof SAVED_AI_CONFIG!=='undefined' ? SAVED_AI_CONFIG : {});
+let currentInfoId = null;
+let autoSaveTimer = null;
+
+// ── Persist to localStorage (auto-save) ───────────────────
+function lsSave(){
+  try{
+    localStorage.setItem('zaaiplan_data', JSON.stringify(data));
+    localStorage.setItem('zaaiplan_nextid', String(nextId));
+  }catch(e){}
+}
+function lsLoad(){
+  try{
+    const d = localStorage.getItem('zaaiplan_data');
+    const n = localStorage.getItem('zaaiplan_nextid');
+    if(d){ data = JSON.parse(d); }
+    if(n){ nextId = parseInt(n)||nextId; }
+  }catch(e){}
+}
+
+// ── Toast ──────────────────────────────────────────────────
+function toast(msg,dur=3000){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),dur);
+}
+
+// ── Unsaved / save ─────────────────────────────────────────
+function markUnsaved(){
+  document.getElementById('saveBar').classList.add('unsaved');
+  document.getElementById('saveMsg').textContent='⚠ Onopgeslagen wijzigingen';
+  if(settings.autoSave){
+    clearTimeout(autoSaveTimer);
+    autoSaveTimer = setTimeout(()=>{ lsSave(); }, 800);
+  }
+}
+
+function saveToFile(){
+  const newData = '// DATA_START\nvar SAVED_DATA = '+JSON.stringify(data)+';\nvar SAVED_NEXT_ID = '+nextId+';\n// DATA_END';
+  const newAI = '// AI_CONFIG_START\nvar SAVED_AI_CONFIG = '+JSON.stringify(AI_CONFIG)+';\n// AI_CONFIG_END';
+  const newSettings = '// SETTINGS_START\nvar SAVED_SETTINGS = '+JSON.stringify(settings)+';\n// SETTINGS_END';
+  let html = document.documentElement.outerHTML
+    .replace(/\/\/ DATA_START[\s\S]*?\/\/ DATA_END/, newData)
+    .replace(/\/\/ AI_CONFIG_START[\s\S]*?\/\/ AI_CONFIG_END/, newAI)
+    .replace(/\/\/ SETTINGS_START[\s\S]*?\/\/ SETTINGS_END/, newSettings);
+  const a = Object.assign(document.createElement('a'),{
+    href: URL.createObjectURL(new Blob([html],{type:'text/html;charset=utf-8'})),
+    download: 'zaaiplan.html'
+  });
+  a.click();
+  lsSave();
+  document.getElementById('saveBar').classList.remove('unsaved');
+  document.getElementById('saveMsg').textContent='✓ Opgeslagen!';
+  setTimeout(()=>document.getElementById('saveMsg').textContent='💾 Klaar om te delen!',3000);
+}
+
+// ── Settings ───────────────────────────────────────────────
+function showSettings(){
+  document.getElementById('toggleTabMode').checked = settings.tabMode;
+  document.getElementById('toggleAutoSave').checked = settings.autoSave;
+  document.getElementById('settingsModal').classList.add('open');
+}
+function closeSettings(){ document.getElementById('settingsModal').classList.remove('open'); }
+
+function setTabMode(val){
+  settings.tabMode = val;
+  markUnsaved();
+  renderCatTabs();
+  renderView();
+}
+function setAutoSave(val){
+  settings.autoSave = val;
+  markUnsaved();
+  toast(val ? '✓ Automatisch opslaan aan' : 'Automatisch opslaan uit');
+}
+
+// ── Category tabs ──────────────────────────────────────────
+function renderCatTabs(){
+  const tabsEl = document.getElementById('catTabs');
+  if(!settings.tabMode){
+    tabsEl.classList.remove('visible');
+    activeCat = 'Alle';
+    return;
+  }
+  tabsEl.classList.add('visible');
+  // Only show subcats relevant to the active main category
+  const relevantData = activeMainCat === 'Alle' ? data : data.filter(p=>p.mainCat===activeMainCat);
+  const cats = ['Alle', ...new Set(relevantData.map(p=>p.cat).filter(Boolean))];
+  tabsEl.innerHTML = cats.map(c=>
+    `<button class="cat-tab${c===activeCat?' active':''}" onclick="setCat('${c.replace(/'/g,"\\'")}',this)">${c}</button>`
+  ).join('');
+}
+function setCat(cat, el){
+  activeCat = cat;
+  document.querySelectorAll('.cat-tab').forEach(t=>t.classList.remove('active'));
+  if(el) el.classList.add('active');
+  renderView();
+}
+
+// ── Month filter ───────────────────────────────────────────
+function setMainCat(cat, el){
+  activeMainCat = cat;
+  document.querySelectorAll('.main-cat-tab').forEach(t=>t.classList.remove('active'));
+  if(el) el.classList.add('active');
+  activeCat = 'Alle'; // reset sub-tab when switching main cat
+  renderCatTabs();
+  renderView();
+}
+
+function setFilter(m,el){
+  filterM=m;
+  document.querySelectorAll('.filter-pill').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+  renderView();
+}
+
+// ── Main render ────────────────────────────────────────────
+function renderView(){
+  const q=(document.getElementById('searchInput').value||'').toLowerCase();
+  let fd = data.filter(p=>{
+    if(q && !p.name.toLowerCase().includes(q)) return false;
+    if(activeMainCat !== 'Alle' && p.mainCat !== activeMainCat) return false;
+    if(settings.tabMode && activeCat !== 'Alle' && p.cat !== activeCat) return false;
+    if(filterM!==null) return (p.sow||[]).includes(filterM)||(p.harvest||[]).includes(filterM)||(p.prune||[]).includes(filterM);
+    return true;
+  });
+
+  document.getElementById('hdr').innerHTML = '<th>Gewas</th>'+MO.map((m,i)=>
+    `<th class="${i===CUR?'cur':''}">${m}${i===CUR?'<br><span style="font-size:8px;color:var(--green)">●</span>':''}</th>`
+  ).join('');
+
+  const cats={};
+  fd.forEach(p=>{const c=p.cat||'Overig';(cats[c]=cats[c]||[]).push(p);});
+  const tb=document.getElementById('tbody');
+  tb.innerHTML='';
+
+  if(!fd.length){
+    tb.innerHTML=`<tr><td colspan="13" style="text-align:center;padding:20px;color:var(--ink-light);font-style:italic">Geen gewassen gevonden</td></tr>`;
+  } else {
+    // Show category header only if NOT in tab mode (tabs already filter by cat)
+    const showCatHeaders = !settings.tabMode || activeCat === 'Alle';
+    Object.entries(cats).forEach(([cat,plants])=>{
+      if(showCatHeaders){
+        const cr=document.createElement('tr');cr.className='cat-row';
+        cr.innerHTML=`<td colspan="13">${esc(cat)}</td>`;tb.appendChild(cr);
+      }
+      plants.forEach(p=>{
+        const hasPrune = p.mainCat === 'Boomgaard';
+        const rows = hasPrune ? 3 : 2;
+        const trS=document.createElement('tr');trS.className='plant-sow';
+        const nd=document.createElement('td');nd.className='pname';nd.rowSpan=rows;
+        nd.innerHTML=`<div class="pname-wrap">
+          <button class="pname-btn" onclick="showPlantInfo(${p.id})" title="Meer info">${esc(p.name)}</button>
+          <button class="del-btn" onclick="delPlant(${p.id})" title="Verwijder">✕</button>
+        </div>`;
+        trS.appendChild(nd);
+        MO.forEach((_,i)=>{
+          const td=document.createElement('td');td.className='mcell'+(i===CUR?' cur-col':'');
+          if(p.loading){td.innerHTML='<div class="ci loading"></div>';}
+          else{
+            const f=(p.sow||[]).includes(i);
+            const label = hasPrune ? 'Planten' : 'Zaaien';
+            td.innerHTML=`<div class="ci ${f?'sow':'empty'}" onclick="togSow(${p.id},${i})" title="${label}: ${MF[i]}"></div>`;
+          }
+          trS.appendChild(td);
+        });
+        tb.appendChild(trS);
+        // Prune row (only for boomgaard)
+        if(hasPrune){
+          const trP=document.createElement('tr');trP.className='plant-prune';
+          MO.forEach((_,i)=>{
+            const td=document.createElement('td');td.className='mcell'+(i===CUR?' cur-col':'');
+            if(p.loading){td.innerHTML='<div class="ci loading"></div>';}
+            else{const f=(p.prune||[]).includes(i);td.innerHTML=`<div class="ci ${f?'prune':'empty prow'}" onclick="togPrune(${p.id},${i})" title="Snoeien: ${MF[i]}"></div>`;}
+            trP.appendChild(td);
+          });
+          tb.appendChild(trP);
+        }
+        const trH=document.createElement('tr');trH.className='plant-harvest';
+        MO.forEach((_,i)=>{
+          const td=document.createElement('td');td.className='mcell'+(i===CUR?' cur-col':'');
+          if(p.loading){td.innerHTML='<div class="ci loading"></div>';}
+          else{const f=(p.harvest||[]).includes(i);td.innerHTML=`<div class="ci ${f?'harvest':'empty hrow'}" onclick="togHarvest(${p.id},${i})" title="Oogsten: ${MF[i]}"></div>`;}
+          trH.appendChild(td);
+        });
+        tb.appendChild(trH);
+      });
+    });
+  }
+
+  // Stats
+  const sowM=data.filter(p=>(p.sow||[]).includes(CUR)).length;
+  const harM=data.filter(p=>(p.harvest||[]).includes(CUR)).length;
+  const nM=(CUR+1)%12;
+  document.getElementById('stats').innerHTML=
+    `<span class="stat">Totaal: <strong>${data.length}</strong></span>`+
+    `<span class="stat">Zaaien ${MO[CUR]}: <strong>${sowM}</strong></span>`+
+    `<span class="stat">Oogsten ${MO[CUR]}: <strong>${harM}</strong></span>`+
+    `<span class="stat">Zaaien ${MO[nM]}: <strong>${data.filter(p=>(p.sow||[]).includes(nM)).length}</strong></span>`;
+
+  // Datalist for category input
+  const cats2=[...new Set(data.map(p=>p.cat).filter(Boolean))];
+  document.getElementById('catList').innerHTML=cats2.map(c=>`<option value="${esc(c)}">`).join('');
+}
+
+// ── Toggle cells ───────────────────────────────────────────
+function togSow(id,m){
+  const p=data.find(p=>p.id===id);if(!p||p.loading)return;
+  if(!p.sow)p.sow=[];const i=p.sow.indexOf(m);
+  i>=0?p.sow.splice(i,1):p.sow.push(m);p.sow.sort((a,b)=>a-b);
+  markUnsaved();renderView();
+}
+function togHarvest(id,m){
+  const p=data.find(p=>p.id===id);if(!p||p.loading)return;
+  if(!p.harvest)p.harvest=[];const i=p.harvest.indexOf(m);
+  i>=0?p.harvest.splice(i,1):p.harvest.push(m);p.harvest.sort((a,b)=>a-b);
+  markUnsaved();renderView();
+}
+function togPrune(id,m){
+  const p=data.find(p=>p.id===id);if(!p||p.loading)return;
+  if(!p.prune)p.prune=[];const i=p.prune.indexOf(m);
+  i>=0?p.prune.splice(i,1):p.prune.push(m);p.prune.sort((a,b)=>a-b);
+  markUnsaved();renderView();
+}
+function delPlant(id){
+  if(!confirm('Verwijderen?'))return;
+  data=data.filter(p=>p.id!==id);markUnsaved();renderCatTabs();renderView();
+}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+// ── Add modal ──────────────────────────────────────────────
+function showAddModal(){
+  document.getElementById('addModal').classList.add('open');
+  document.getElementById('mStatus').textContent='';
+  setTimeout(()=>document.getElementById('mName').focus(),50);
+}
+function closeAddModal(){
+  document.getElementById('addModal').classList.remove('open');
+  document.getElementById('mName').value='';
+  document.getElementById('mCat').value='';
+  document.getElementById('mStatus').textContent='';
+  document.getElementById('mAddBtn').disabled=false;
+  document.getElementById('mAddBtn').textContent='Toevoegen';
+  document.getElementById('mCancelBtn').disabled=false;
+}
+async function addFromModal(){
+  const name=document.getElementById('mName').value.trim();
+  const cat=document.getElementById('mCat').value.trim()||'Overig';
+  if(!name)return;
+  document.getElementById('mAddBtn').disabled=true;
+  document.getElementById('mAddBtn').textContent='⏳ Bezig...';
+  document.getElementById('mCancelBtn').disabled=true;
+  document.getElementById('mStatus').textContent='AI zoekt tijden op...';
+  await addPlantWithAI(name,cat);
+  closeAddModal();
+}
+async function quickAdd(){
+  const inp=document.getElementById('qaInput');
+  const btn=document.getElementById('qaBtn');
+  const name=inp.value.trim();if(!name)return;
+  inp.value='';btn.disabled=true;
+  await addPlantWithAI(name,'Overig');
+  btn.disabled=false;inp.focus();
+}
+async function addPlantWithAI(name,cat){
+  const id=nextId++;
+  const mainCat = activeMainCat === 'Alle' ? 'Moestuin' : activeMainCat;
+  const hasPrune = mainCat === 'Boomgaard';
+  data.push({id,name,cat:cat||'Overig',mainCat,sow:[],prune:hasPrune?[]:undefined,harvest:[],loading:true});
+  markUnsaved();renderView();
+  try{
+    const times=await aiLookup(name, mainCat==='Boomgaard');
+    if(times.prune && hasPrune) p.prune=times.prune;
+    const p=data.find(p=>p.id===id);
+    if(p){p.sow=times.sow;p.harvest=times.harvest;if(times.prune)p.prune=times.prune;p.loading=false;}
+    toast('✓ Tijden gevonden voor '+name);
+  }catch(e){
+    const p=data.find(p=>p.id===id);
+    if(p)p.loading=false;
+    toast('⚠ '+e.message);
+  }
+  renderCatTabs();renderView();
+}
+
+// ── Plant info modal ───────────────────────────────────────
+function showPlantInfo(id){
+  const p = data.find(p=>p.id===id);
+  if(!p) return;
+  currentInfoId = id;
+  document.getElementById('infoName').textContent = p.name;
+  document.getElementById('infoCat').textContent = p.cat||'Overig';
+  // Mini calendar
+  const mo3=['J','F','M','A','M','J','J','A','S','O','N','D'];
+  const hasPrune = p.mainCat === 'Boomgaard';
+  document.getElementById('infoSowLabel').textContent = hasPrune ? 'Planten' : 'Zaaien';
+  document.getElementById('infoPruneLabel').style.display = hasPrune ? '' : 'none';
+  document.getElementById('infoPruneMonths').style.display = hasPrune ? '' : 'none';
+  document.getElementById('infoSowMonths').innerHTML = mo3.map((m,i)=>
+    `<div class="info-month ${(p.sow||[]).includes(i)?'active-sow':'inactive'}">${m}</div>`
+  ).join('');
+  if(hasPrune){
+    document.getElementById('infoPruneMonths').innerHTML = mo3.map((m,i)=>
+      `<div class="info-month ${(p.prune||[]).includes(i)?'active-prune':'inactive'}" style="${(p.prune||[]).includes(i)?'background:var(--purple-mid)':''}">${m}</div>`
+    ).join('');
+  }
+  document.getElementById('infoHarvestMonths').innerHTML = mo3.map((m,i)=>
+    `<div class="info-month ${(p.harvest||[]).includes(i)?'active-harvest':'inactive'}">${m}</div>`
+  ).join('');
+  // Reset tips
+  document.getElementById('infoTips').innerHTML = '<div class="info-tips-loading">AI tips worden geladen...</div>';
+  document.getElementById('infoModal').classList.add('open');
+  loadPlantTips(p);
+}
+function closeInfoModal(){
+  document.getElementById('infoModal').classList.remove('open');
+  currentInfoId = null;
+}
+function refreshInfoTips(){
+  if(currentInfoId === null) return;
+  const p = data.find(p=>p.id===currentInfoId);
+  if(!p) return;
+  document.getElementById('infoTips').innerHTML = '<div class="info-tips-loading">Opnieuw laden...</div>';
+  loadPlantTips(p);
+}
+async function loadPlantTips(p){
+  try{
+    const tips = await aiPlantInfo(p.name, p.cat);
+    document.getElementById('infoTips').innerHTML = tips;
+  }catch(e){
+    document.getElementById('infoTips').innerHTML =
+      '<p style="color:var(--ink-light);font-size:11px">⚠ Kon geen tips laden: '+esc(e.message)+'<br><br>Koppel een AI via de 🤖 knop om tips te zien.</p>';
+  }
+}
+
+// ── AI functions ───────────────────────────────────────────
+const PROVIDER_DEFAULTS={
+  claude:{model:'claude-haiku-4-5-20251001'},
+  openai:{model:'gpt-4o-mini'},
+  gemini:{model:'gemini-2.0-flash'},
+  openrouter:{model:'openai/gpt-4o-mini'},
+};
+
+async function callAI(prompt, maxTokens){
+  const cfg = AI_CONFIG;
+  const model = cfg.model||(PROVIDER_DEFAULTS[cfg.provider]||PROVIDER_DEFAULTS.claude).model;
+
+  if(!cfg.apiKey){
+    // Fallback: via Claude.ai proxy
+    const resp = await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:maxTokens||400,
+        messages:[{role:'user',content:prompt}]})
+    });
+    if(!resp.ok) throw new Error('Geen AI gekoppeld. Klik op 🤖 AI om een sleutel in te stellen.');
+    const j=await resp.json();
+    return j.content.map(c=>c.text||'').join('');
+  }
+
+  if(cfg.provider==='claude'||cfg.provider===''){
+    const resp=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':cfg.apiKey,
+        'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model,max_tokens:maxTokens||400,messages:[{role:'user',content:prompt}]})
+    });
+    if(!resp.ok) throw new Error('Claude fout '+resp.status);
+    const j=await resp.json();return j.content.map(c=>c.text||'').join('');
+  } else if(cfg.provider==='openai'||cfg.provider==='openrouter'){
+    const url=cfg.provider==='openai'?'https://api.openai.com/v1/chat/completions':'https://openrouter.ai/api/v1/chat/completions';
+    const resp=await fetch(url,{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+cfg.apiKey},
+      body:JSON.stringify({model,max_tokens:maxTokens||400,messages:[{role:'user',content:prompt}]})
+    });
+    if(!resp.ok) throw new Error('AI fout '+resp.status);
+    const j=await resp.json();return j.choices[0].message.content;
+  } else if(cfg.provider==='gemini'){
+    const resp=await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+model+':generateContent?key='+cfg.apiKey,{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({contents:[{parts:[{text:prompt}]}],generationConfig:{maxOutputTokens:maxTokens||400}})
+    });
+    if(!resp.ok) throw new Error('Gemini fout '+resp.status);
+    const j=await resp.json();return j.candidates[0].content.parts[0].text;
+  }
+  throw new Error('Onbekende provider');
+}
+
+async function aiLookup(plantName, isBoomgaard){
+  let prompt;
+  if(isBoomgaard){
+    prompt='Je bent een Nederlandse tuinier. Geef voor "'+plantName+'" de plant-, snoei- en oogsttijden voor Drenthe.\nGeef ALLEEN een JSON object terug:\n{"sow":[plantmaanden 0=jan..11=dec],"prune":[snoeimaanden],"harvest":[oogstmaanden]}\nVoorbeeld appel: {"sow":[10,11],"prune":[0,1,2],"harvest":[8,9,10]}';
+  } else {
+    prompt='Je bent een Nederlandse moestuin expert. Geef voor "'+plantName+'" de zaai- en oogsttijden voor Drenthe (iets later voorjaar).\nGeef ALLEEN een JSON object terug, geen uitleg:\n{"sow":[maandnummers 0=jan..11=dec],"harvest":[maandnummers]}\nVoorbeeld: {"sow":[0,1,2],"harvest":[6,7,8,9]}';
+  }
+  const text = await callAI(prompt, 200);
+  const clean = text.replace(/```json|```/g,'').trim();
+  const parsed = JSON.parse(clean);
+  if(!Array.isArray(parsed.sow)||!Array.isArray(parsed.harvest)) throw new Error('Ongeldige AI respons');
+  parsed.sow=parsed.sow.filter(n=>n>=0&&n<=11);
+  parsed.harvest=parsed.harvest.filter(n=>n>=0&&n<=11);
+  if(parsed.prune) parsed.prune=parsed.prune.filter(n=>n>=0&&n<=11);
+  return parsed;
+}
+
+async function aiPlantInfo(plantName, cat){
+  const prompt='Je bent een ervaren Nederlandse moestuinier. Geef praktische tips over "'+plantName+'" (categorie: '+cat+') voor Drenthe.\n\nGeef een korte HTML-sectie terug (geen body/html tags), gebruik alleen:\n- <h3> voor een kopje\n- <p> voor alineas\n- <ul><li> voor lijstjes\n\nDek deze onderwerpen: zaai- en planttips, bodem/bemesting, water/zon, ziektes/plagen, oogsttips. Maximaal 250 woorden. Schrijf in het Nederlands.';
+  const html = await callAI(prompt, 600);
+  // Wrap in container
+  return '<h3 style="font-family:\'Playfair Display\',serif;color:var(--green);margin-bottom:8px">Tips voor '+esc(plantName)+'</h3>'+html;
+}
+
+// ── AI settings ────────────────────────────────────────────
+function showAISettings(){
+  document.getElementById('aiProvider').value=AI_CONFIG.provider||'claude';
+  document.getElementById('aiKey').value=AI_CONFIG.apiKey||'';
+  document.getElementById('aiModel').value=AI_CONFIG.model||'';
+  updateProviderHelp();
+  document.getElementById('aiModal').classList.add('open');
+}
+function closeAISettings(){ document.getElementById('aiModal').classList.remove('open'); }
+function saveAISettings(){
+  AI_CONFIG.provider=document.getElementById('aiProvider').value;
+  AI_CONFIG.apiKey=document.getElementById('aiKey').value.trim();
+  AI_CONFIG.model=document.getElementById('aiModel').value.trim();
+  closeAISettings();markUnsaved();updateAIBadge();
+  toast('✓ AI opgeslagen — klik Opslaan om te bewaren');
+}
+function updateProviderHelp(){
+  const p = document.getElementById('aiProvider').value;
+  const models = {
+    gemini:'gemini-2.0-flash',
+    claude:'claude-haiku-4-5-20251001',
+    openai:'gpt-4o-mini',
+    openrouter:'openai/gpt-4o-mini'
+  };
+  document.getElementById('aiModel').placeholder = models[p]||'';
+
+  const instructions = {
+    gemini: `
+      <div style="background:#e8f5e9;border-radius:8px;padding:12px;font-size:12px;line-height:1.9">
+        <strong style="color:#2e7d32">Gemini — Gratis, log in met je Google-account</strong><br><br>
+        <b>Stap 2 — Sleutel ophalen:</b><br>
+        1. Ga naar <a href="https://aistudio.google.com/app/apikey" target="_blank" style="color:var(--blue)">aistudio.google.com/app/apikey</a><br>
+        2. Log in met je <b>gewone Google-account</b><br>
+        3. Klik op <b>"Create API key"</b><br>
+        4. Klik op <b>"Create API key in new project"</b><br>
+        5. Er verschijnt een lange code (begint met <code>AIza...</code>)<br>
+        6. Klik op het <b>kopieer-icoontje</b> naast de code<br>
+        7. Plak de code hieronder in het sleutelveld<br><br>
+        <span style="color:#2e7d32">✓ Helemaal gratis &nbsp;✓ Geen betaalgegevens nodig</span>
+      </div>`,
+    claude: `
+      <div style="background:#e3f2fd;border-radius:8px;padding:12px;font-size:12px;line-height:1.9">
+        <strong style="color:#1565c0">Claude — Betaald (circa €0,001 per zoekopdracht)</strong><br><br>
+        <b>Stap 2 — Sleutel ophalen:</b><br>
+        1. Ga naar <a href="https://console.anthropic.com/settings/keys" target="_blank" style="color:var(--blue)">console.anthropic.com/settings/keys</a><br>
+        2. Maak een account aan of log in<br>
+        3. Voeg betaalgegevens toe (je betaalt per gebruik, zeer goedkoop)<br>
+        4. Klik op <b>"Create Key"</b><br>
+        5. Kopieer de sleutel (begint met <code>sk-ant-...</code>)<br>
+        6. Plak de code hieronder in het sleutelveld
+      </div>`,
+    openai: `
+      <div style="background:#e3f2fd;border-radius:8px;padding:12px;font-size:12px;line-height:1.9">
+        <strong style="color:#1565c0">ChatGPT — Betaald (circa €0,001 per zoekopdracht)</strong><br><br>
+        <b>Stap 2 — Sleutel ophalen:</b><br>
+        1. Ga naar <a href="https://platform.openai.com/api-keys" target="_blank" style="color:var(--blue)">platform.openai.com/api-keys</a><br>
+        2. Maak een account aan of log in<br>
+        3. Voeg betaalgegevens toe<br>
+        4. Klik op <b>"Create new secret key"</b><br>
+        5. Kopieer de sleutel (begint met <code>sk-...</code>)<br>
+        6. Plak de code hieronder in het sleutelveld
+      </div>`,
+    openrouter: `
+      <div style="background:#f3e5f5;border-radius:8px;padding:12px;font-size:12px;line-height:1.9">
+        <strong style="color:#6a1b9a">OpenRouter — Gratis modellen beschikbaar</strong><br><br>
+        <b>Stap 2 — Sleutel ophalen:</b><br>
+        1. Ga naar <a href="https://openrouter.ai" target="_blank" style="color:var(--blue)">openrouter.ai</a><br>
+        2. Maak een gratis account aan<br>
+        3. Ga naar <b>Keys</b> in het menu<br>
+        4. Klik op <b>"Create Key"</b><br>
+        5. Kopieer de sleutel (begint met <code>sk-or-...</code>)<br>
+        6. Plak de code hieronder in het sleutelveld<br><br>
+        <span style="color:#6a1b9a">✓ Heeft gratis modellen &nbsp;✓ Toegang tot 100+ AI-modellen</span>
+      </div>`
+  };
+  document.getElementById('aiHelp').innerHTML = instructions[p] || instructions.gemini;
+}
+
+function toggleKeyVisible(){
+  const inp = document.getElementById('aiKey');
+  const btn = document.getElementById('toggleKeyBtn');
+  if(inp.type === 'password'){ inp.type='text'; btn.textContent='verberg'; }
+  else { inp.type='password'; btn.textContent='toon'; }
+}
+function updateAIBadge(){
+  const names={claude:'Claude',openai:'ChatGPT',gemini:'Gemini',openrouter:'OpenRouter'};
+  const btn=document.getElementById('aiSettingsBtn');
+  if(AI_CONFIG.apiKey){
+    btn.textContent='🤖 '+(names[AI_CONFIG.provider]||'AI');
+    btn.style.color='var(--green)';btn.style.borderColor='var(--green)';
+  }else{
+    btn.textContent='🤖 AI';
+    btn.style.color='';btn.style.borderColor='';
+  }
+}
+
+// ── Init ───────────────────────────────────────────────────
+// Load from localStorage if data is empty (first open after install)
+if(data.length === 0){ lsLoad(); }
+
+updateAIBadge();
+renderCatTabs();
+renderView();
+</script>
+</body>
+</html>
