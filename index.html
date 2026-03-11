@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Zaaiplan">
 <link rel="apple-touch-icon" href="icons/icon-180.png">
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=DM+Mono:wght@300;400;500&family=Playfair+Display:wght@400;700;800&display=swap" rel="stylesheet">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=DM+Mono:wght@300;400;500&display=swap');
 
@@ -54,6 +54,262 @@
   --shadow-lg: 0 8px 48px rgba(0,0,0,0.7);
   --glow: 0 0 40px rgba(76,175,80,0.1);
 }
+
+/* ══ THEME: LIGHT ══════════════════════════════════════════ */
+[data-theme="light"] {
+  --bg: #f0f4f0;
+  --bg2: #e8ede8;
+  --surface: #ffffff;
+  --surface2: #f4f7f4;
+  --surface3: #e8ede8;
+  --surface4: #dde5dd;
+  --border: #d0dbd0;
+  --border2: #c0d0c0;
+  --border3: #a8c0a8;
+  --ink: #1a2e1a;
+  --ink-mid: #3d5c3d;
+  --ink-light: #7a9a7a;
+  --green: #2e7d32;
+  --green-bright: #388e3c;
+  --green-mid: #4caf50;
+  --green-dark: #c8e6c9;
+  --green-glow: rgba(46,125,50,0.12);
+  --green-glow2: rgba(46,125,50,0.06);
+  --orange: #e65100;
+  --orange-pale: rgba(230,81,0,0.1);
+  --orange-glow: rgba(230,81,0,0.15);
+  --purple: #6a1b9a;
+  --purple-mid: #8e24aa;
+  --purple-pale: rgba(106,27,154,0.1);
+  --red: #c62828;
+  --blue: #1565c0;
+  --shadow: 0 2px 16px rgba(0,0,0,0.1);
+  --shadow-lg: 0 6px 32px rgba(0,0,0,0.15);
+  --glow: 0 0 30px rgba(46,125,50,0.08);
+}
+[data-theme="light"] body {
+  background-image:
+    radial-gradient(ellipse at 10% 0%, rgba(76,175,80,0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 90% 100%, rgba(56,142,60,0.05) 0%, transparent 50%);
+}
+[data-theme="light"] body::before {
+  background-image:
+    linear-gradient(rgba(46,125,50,0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(46,125,50,0.05) 1px, transparent 1px);
+}
+[data-theme="light"] h1 {
+  background: linear-gradient(135deg, #1b5e20, #2e7d32, #388e3c);
+  -webkit-background-clip: text; background-clip: text;
+}
+[data-theme="light"] .save-bar {
+  background: linear-gradient(135deg, rgba(200,230,201,0.8), rgba(232,245,233,0.9));
+  border-color: rgba(46,125,50,0.25);
+}
+[data-theme="light"] .table-wrap { box-shadow: 0 4px 24px rgba(0,0,0,0.1); }
+[data-theme="light"] thead th { background: #f4f7f4; }
+[data-theme="light"] td.pname { background: #ffffff; }
+[data-theme="light"] .main-cat-tab.active {
+  background: linear-gradient(135deg, #c8e6c9, #a5d6a7);
+  border-color: #4caf50; color: #1b5e20;
+  box-shadow: 0 0 16px rgba(76,175,80,0.2);
+}
+[data-theme="light"] .btn { box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+[data-theme="light"] #toast { background: rgba(255,255,255,0.95); border-color: #c0d0c0; color: #1a2e1a; }
+
+/* ══ THEME: MOESTUIN ════════════════════════════════════════ */
+[data-theme="moestuin"] {
+  --bg: #2a3d1e;
+  --bg2: #243318;
+  --surface: rgba(255,252,245,0.75);
+  --surface2: rgba(245,238,220,0.68);
+  --surface3: rgba(232,222,200,0.62);
+  --surface4: rgba(220,208,182,0.58);
+  --border: rgba(180,150,90,0.35);
+  --border2: rgba(160,130,70,0.45);
+  --border3: rgba(140,110,55,0.55);
+  --ink: #1e1206;
+  --ink-mid: #4a3018;
+  --ink-light: #8a6838;
+  --green: #3d6b2e;
+  --green-bright: #4a8238;
+  --green-mid: #5a9448;
+  --green-dark: rgba(180,220,160,0.5);
+  --green-glow: rgba(74,124,63,0.2);
+  --green-glow2: rgba(74,124,63,0.1);
+  --orange: #b85a08;
+  --orange-pale: rgba(184,90,8,0.15);
+  --orange-glow: rgba(184,90,8,0.25);
+  --purple: #6a3a7a;
+  --purple-mid: #7a4888;
+  --purple-pale: rgba(106,58,122,0.15);
+  --red: #a83020;
+  --blue: #2a5080;
+  --shadow: 0 4px 20px rgba(0,0,0,0.35);
+  --shadow-lg: 0 10px 48px rgba(0,0,0,0.45);
+  --glow: 0 0 40px rgba(74,124,63,0.2);
+}
+
+/* Background image with blur overlay */
+[data-theme="moestuin"] body {
+  background: #2a3d1e;
+  background-image: none;
+  position: relative;
+}
+[data-theme="moestuin"] body::after {
+  content: '';
+  position: fixed; inset: 0; z-index: 0;
+  background-image: url('https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=1920&q=85&auto=format&fit=crop');
+  /* Fallback gradient if image fails to load */
+  background-color: #1a2e12;
+  background-size: cover;
+  background-position: center center;
+  background-attachment: fixed;
+  filter: blur(5px) brightness(0.38) saturate(1.3);
+  transform: scale(1.05);
+  pointer-events: none;
+}
+[data-theme="moestuin"] body::before {
+  z-index: 1;
+  background-image:
+    repeating-linear-gradient(0deg, transparent, transparent 27px, rgba(255,240,200,0.03) 27px, rgba(255,240,200,0.03) 28px);
+  background-size: auto;
+}
+[data-theme="moestuin"] .app { position: relative; z-index: 2; }
+[data-theme="moestuin"] #toast { z-index: 302; }
+[data-theme="moestuin"] .modal-overlay { z-index: 200; }
+
+/* Typography */
+[data-theme="moestuin"] h1 {
+  background: linear-gradient(135deg, #c8e6a0, #8aba58, #6a9a40);
+  -webkit-background-clip: text; background-clip: text;
+  font-family: 'Playfair Display', serif !important;
+  text-shadow: none;
+}
+[data-theme="moestuin"] .subtitle { color: rgba(200,220,160,0.7); }
+
+/* Surfaces — frosted glass effect */
+[data-theme="moestuin"] .table-wrap {
+  background: rgba(255,252,245,0.72);
+  backdrop-filter: blur(20px) saturate(1.4);
+  -webkit-backdrop-filter: blur(16px);
+  border-color: rgba(160,130,70,0.4);
+  box-shadow: 0 8px 40px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,240,180,0.15);
+}
+[data-theme="moestuin"] thead th {
+  background: rgba(245,240,225,0.88);
+  color: #4a3018;
+}
+[data-theme="moestuin"] thead th.cur { color: #3d6b2e; }
+[data-theme="moestuin"] td.pname { background: rgba(255,252,245,0.85); }
+[data-theme="moestuin"] .pname-btn { color: #4a3018; }
+[data-theme="moestuin"] .pname-btn:hover { background: rgba(74,124,63,0.15); color: #2a5020; }
+
+[data-theme="moestuin"] .save-bar {
+  background: rgba(232,248,220,0.75);
+  backdrop-filter: blur(12px);
+  border-color: rgba(74,124,63,0.35);
+  color: #2a4a18;
+}
+[data-theme="moestuin"] .legend {
+  background: rgba(250,245,236,0.82);
+  backdrop-filter: blur(12px);
+  border-color: rgba(160,130,70,0.35);
+}
+[data-theme="moestuin"] .btn {
+  background: rgba(250,245,236,0.80);
+  backdrop-filter: blur(8px);
+  border-color: rgba(160,130,70,0.4);
+  color: #4a3018;
+}
+[data-theme="moestuin"] .btn:hover { background: rgba(242,235,220,0.92); }
+[data-theme="moestuin"] .btn.primary {
+  background: linear-gradient(135deg, #4a8238, #3d6b2e);
+  border-color: transparent; color: #fff;
+}
+[data-theme="moestuin"] .main-cat-tab {
+  background: rgba(250,245,236,0.75);
+  backdrop-filter: blur(8px);
+  border-color: rgba(160,130,70,0.35);
+  color: #6a5030;
+}
+[data-theme="moestuin"] .main-cat-tab.active {
+  background: rgba(120,180,80,0.25);
+  backdrop-filter: blur(8px);
+  border-color: rgba(74,124,63,0.6);
+  color: #1e3a10;
+  box-shadow: 0 0 20px rgba(74,124,63,0.25);
+}
+[data-theme="moestuin"] .cat-tab {
+  background: rgba(250,245,236,0.7);
+  border-color: rgba(160,130,70,0.3);
+  color: #6a5030;
+}
+[data-theme="moestuin"] .cat-tab.active {
+  background: rgba(74,124,63,0.15);
+  border-color: rgba(74,124,63,0.4);
+  color: #2a5020;
+}
+[data-theme="moestuin"] .toolbar input,
+[data-theme="moestuin"] .add-area input {
+  background: rgba(250,245,236,0.82);
+  backdrop-filter: blur(8px);
+  border-color: rgba(160,130,70,0.4);
+  color: #1e1206;
+}
+[data-theme="moestuin"] .filter-pill {
+  background: rgba(250,245,236,0.70);
+  border-color: rgba(160,130,70,0.3);
+  color: #6a5030;
+}
+[data-theme="moestuin"] .filter-pill.active {
+  background: rgba(184,90,8,0.15);
+  border-color: rgba(184,90,8,0.4);
+  color: #7a3a08;
+}
+[data-theme="moestuin"] .mbox {
+  background: rgba(255,252,245,0.82);
+  backdrop-filter: blur(20px);
+  border-color: rgba(160,130,70,0.4);
+}
+[data-theme="moestuin"] .mbox h2 {
+  background: linear-gradient(135deg, #3d6b2e, #7aaa48);
+  -webkit-background-clip: text; background-clip: text;
+  font-family: 'Playfair Display', serif;
+}
+[data-theme="moestuin"] .mbox label { color: #8a6838; }
+[data-theme="moestuin"] .mbox input,
+[data-theme="moestuin"] .mbox select {
+  background: rgba(242,235,220,0.9);
+  border-color: rgba(160,130,70,0.4);
+  color: #1e1206;
+}
+[data-theme="moestuin"] .setting-label { color: #1e1206; }
+[data-theme="moestuin"] .setting-row { border-color: rgba(160,130,70,0.2); }
+[data-theme="moestuin"] .info-name {
+  background: linear-gradient(135deg, #3d6b2e, #7aaa48);
+  -webkit-background-clip: text; background-clip: text;
+  font-family: 'Playfair Display', serif;
+}
+[data-theme="moestuin"] .info-cat {
+  background: rgba(74,124,63,0.15);
+  border-color: rgba(74,124,63,0.3);
+  color: #2a5020;
+}
+[data-theme="moestuin"] .info-tips {
+  background: rgba(242,235,220,0.9);
+  border-color: rgba(160,130,70,0.3);
+}
+[data-theme="moestuin"] #toast {
+  background: rgba(250,245,236,0.97);
+  backdrop-filter: blur(12px);
+  border-color: rgba(160,130,70,0.5);
+  color: #1e1206;
+}
+[data-theme="moestuin"] .add-area {
+  background: rgba(242,235,220,0.85);
+  border-color: rgba(160,130,70,0.3);
+}
+[data-theme="moestuin"] tr.plant-harvest { border-color: rgba(160,130,70,0.2); }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -460,6 +716,20 @@ td.cur-col .ci.empty { background: rgba(76,175,80,0.04); }
   width: 80px; font-family: 'DM Mono', monospace; font-size: 11px;
   padding: 6px 8px; margin-bottom: 0; text-transform: uppercase;
 }
+.theme-btn {
+  flex: 1; min-width: 80px;
+  background: var(--surface2); border: 2px solid var(--border2);
+  border-radius: var(--radius-sm); padding: 12px 8px;
+  font-family: 'Outfit', sans-serif; font-size: 12px; font-weight: 600;
+  color: var(--ink-light); cursor: pointer; transition: all .2s;
+  text-align: center;
+}
+.theme-btn:hover { background: var(--surface3); color: var(--ink); transform: translateY(-2px); }
+.theme-btn.active {
+  background: var(--green-glow); border-color: var(--green);
+  color: var(--green-bright);
+  box-shadow: 0 0 16px var(--green-glow);
+}
 .color-reset-btn {
   font-size: 10px; color: var(--ink-light); background: none;
   border: 1px solid var(--border2); border-radius: 5px;
@@ -484,9 +754,9 @@ td.cur-col .ci.empty { background: rgba(76,175,80,0.04); }
     </div>
   </header>
 
-  <div class="save-bar" id="saveBar">
-    <span id="saveMsg">💾 Klaar om te delen!</span>
-    <button class="save-btn" onclick="saveToFile()">⬇ Opslaan als bestand</button>
+  <!-- Save bar hidden, accessible via owner login -->
+  <div id="saveBar" style="display:none">
+    <span id="saveMsg"></span>
   </div>
 
   <div class="toolbar">
@@ -614,6 +884,21 @@ td.cur-col .ci.empty { background: rgba(76,175,80,0.04); }
     </div>
 
     <br>
+    <div style="font-size:10px;color:var(--ink-light);text-transform:uppercase;letter-spacing:.12em;font-weight:700;margin-bottom:10px">🖌️ Thema</div>
+    <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap">
+      <button class="theme-btn" data-theme="dark" onclick="setTheme('dark')">
+        <span style="font-size:20px;display:block;margin-bottom:4px">🌑</span>
+        <span>Dark</span>
+      </button>
+      <button class="theme-btn" data-theme="light" onclick="setTheme('light')">
+        <span style="font-size:20px;display:block;margin-bottom:4px">☀️</span>
+        <span>Light</span>
+      </button>
+      <button class="theme-btn" data-theme="moestuin" onclick="setTheme('moestuin')">
+        <span style="font-size:20px;display:block;margin-bottom:4px">🌱</span>
+        <span>Moestuin</span>
+      </button>
+    </div>
     <div style="font-size:10px;color:var(--ink-light);text-transform:uppercase;letter-spacing:.12em;font-weight:700;margin-bottom:10px">🎨 Kleuren blokjes</div>
     <div class="color-picker-section">
       <div class="color-picker-row">
@@ -657,6 +942,11 @@ td.cur-col .ci.empty { background: rgba(76,175,80,0.04); }
     <br>
     <div class="mrow">
       <button class="btn primary" onclick="closeSettings()">Sluiten</button>
+    </div>
+    <div style="text-align:right;margin-top:16px;padding-top:12px;border-top:1px solid var(--border)">
+      <span id="ownerLoginLink" onclick="showOwnerLogin()"
+        style="font-size:9px;color:var(--ink-light);cursor:pointer;opacity:0.4;letter-spacing:.05em;user-select:none"
+        title="">pincode</span>
     </div>
   </div>
 </div>
@@ -712,6 +1002,41 @@ td.cur-col .ci.empty { background: rgba(76,175,80,0.04); }
     <div class="mrow" style="justify-content:center;gap:10px">
       <button class="btn" onclick="closePinModal()">Annuleer</button>
       <button class="btn primary" onclick="checkPin()">✓ Bevestigen</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- Owner login modal -->
+<div class="modal-overlay" id="ownerModal" onclick="if(event.target===this)closeOwnerModal()">
+  <div class="mbox" style="max-width:300px;text-align:center">
+    <h2 style="text-align:center;margin-bottom:6px">🔑 Eigenaar</h2>
+    <p style="font-size:11px;color:var(--ink-light);margin-bottom:16px">Voer pincode in</p>
+    <input type="password" id="ownerPinInput" maxlength="10" placeholder="••••"
+      style="text-align:center;font-size:22px;letter-spacing:8px;font-family:'DM Mono',monospace"
+      oninput="ownerPinError(false)"
+      onkeydown="if(event.key==='Enter')checkOwnerPin()">
+    <div id="ownerPinError" style="font-size:11px;color:var(--red);margin-top:-8px;margin-bottom:10px;min-height:16px"></div>
+    <div class="mrow" style="justify-content:center;gap:10px">
+      <button class="btn" onclick="closeOwnerModal()">Annuleer</button>
+      <button class="btn primary" onclick="checkOwnerPin()">✓ Inloggen</button>
+    </div>
+  </div>
+</div>
+
+<!-- Owner panel modal -->
+<div class="modal-overlay" id="ownerPanel" onclick="if(event.target===this)closeOwnerPanel()">
+  <div class="mbox" style="max-width:360px">
+    <h2 style="margin-bottom:6px">🌿 Eigenaar panel</h2>
+    <p style="font-size:11px;color:var(--ink-light);margin-bottom:20px">Alleen zichtbaar voor jou</p>
+    <button class="btn primary" onclick="doSaveToFile()" style="width:100%;margin-bottom:10px;padding:12px;font-size:14px">
+      ⬇ Opslaan als bestand
+    </button>
+    <p style="font-size:10px;color:var(--ink-light);text-align:center;margin-bottom:16px">
+      Sla de app op als HTML-bestand en upload naar GitHub
+    </p>
+    <div class="mrow" style="justify-content:center">
+      <button class="btn" onclick="closeOwnerPanel()">Sluiten</button>
     </div>
   </div>
 </div>
@@ -857,13 +1182,24 @@ var SAVED_NEXT_ID = 221;
 var SAVED_AI_CONFIG = {"provider":"gemini","apiKey":"AIzaSyDrAPvw4ATe8KydVpVLg87PP998XtUOJs0","model":"gemini-1.5-flash-latest"};
 // AI_CONFIG_END
 // SETTINGS_START
-var SAVED_SETTINGS = {"tabMode":false,"autoSave":true,"colors":{"sow":"#ff9800","harvest":"#4caf50","prune":"#ab47bc"}};
+var SAVED_SETTINGS = {"tabMode":false,"autoSave":true,"theme":"dark","colors":{"sow":"#ff9800","harvest":"#4caf50","prune":"#ab47bc"}};
 // SETTINGS_END
 </script>
 
 <script>
 const SAVE_PIN = '1005';
 const MO=['jan','feb','mrt','apr','mei','jun','jul','aug','sep','okt','nov','dec'];
+
+// ── Category icons ─────────────────────────────────────────
+const CAT_ICONS = {
+  'Wortels & Knollen':'🥕','Koolsoorten':'🥦','Tomaten':'🍅',
+  'Komkommer & Co':'🥒','Paprika & Peper':'🫑','Bonen':'🫘',
+  'Bladgroenten':'🥬','Erwten':'🟢','Ui-achtigen':'🧅',
+  'Overig Groenten':'🌽','Kruiden':'🌿','Bloemen':'🌸',
+  'Bessen & Frambozen':'🫐','Klimplanten':'🍇','Fruitbomen':'🍏','Noten':'🌰'
+};
+function catIcon(cat){ return CAT_ICONS[cat] || '🌱'; }
+
 const MF=['Januari','Februari','Maart','April','Mei','Juni','Juli','Augustus','September','Oktober','November','December'];
 const CUR = new Date().getMonth();
 
@@ -872,8 +1208,9 @@ let nextId = SAVED_NEXT_ID;
 let filterM = null;
 let activeCat = 'Alle';
 let activeMainCat = 'Alle';
-let settings = Object.assign({tabMode:false,autoSave:true,colors:{sow:'#ff9800',harvest:'#4caf50',prune:'#ab47bc'}}, typeof SAVED_SETTINGS!=='undefined' ? SAVED_SETTINGS : {});
+let settings = Object.assign({tabMode:false,autoSave:true,theme:'dark',colors:{sow:'#ff9800',harvest:'#4caf50',prune:'#ab47bc'}}, typeof SAVED_SETTINGS!=='undefined' ? SAVED_SETTINGS : {});
 if(!settings.colors) settings.colors={sow:'#ff9800',harvest:'#4caf50',prune:'#ab47bc'};
+if(!settings.theme) settings.theme='dark';
 let AI_CONFIG = Object.assign({provider:'',apiKey:'',model:''}, typeof SAVED_AI_CONFIG!=='undefined' ? SAVED_AI_CONFIG : {});
 let currentInfoId = null;
 let autoSaveTimer = null;
@@ -912,7 +1249,7 @@ function markUnsaved(){
 }
 
 function saveToFile(){
-  requirePin(()=>_doSaveToFile());
+  _doSaveToFile();
 }
 function _doSaveToFile(){
   const newData = '// DATA_START\nvar SAVED_DATA = '+JSON.stringify(data)+';\nvar SAVED_NEXT_ID = '+nextId+';\n// DATA_END';
@@ -933,6 +1270,40 @@ function _doSaveToFile(){
   setTimeout(()=>document.getElementById('saveMsg').textContent='💾 Klaar om te delen!',3000);
 }
 
+
+
+// ── Owner login ────────────────────────────────────────────
+function showOwnerLogin(){
+  closeSettings();
+  document.getElementById('ownerPinInput').value = '';
+  ownerPinError(false);
+  document.getElementById('ownerModal').classList.add('open');
+  setTimeout(()=>document.getElementById('ownerPinInput').focus(), 150);
+}
+function closeOwnerModal(){
+  document.getElementById('ownerModal').classList.remove('open');
+}
+function ownerPinError(show){
+  document.getElementById('ownerPinError').textContent = show ? '❌ Verkeerde pincode' : '';
+}
+function checkOwnerPin(){
+  const entered = document.getElementById('ownerPinInput').value;
+  if(entered === SAVE_PIN){
+    closeOwnerModal();
+    document.getElementById('ownerPanel').classList.add('open');
+  } else {
+    ownerPinError(true);
+    document.getElementById('ownerPinInput').value = '';
+    document.getElementById('ownerPinInput').focus();
+  }
+}
+function closeOwnerPanel(){
+  document.getElementById('ownerPanel').classList.remove('open');
+}
+function doSaveToFile(){
+  closeOwnerPanel();
+  _doSaveToFile();
+}
 
 // ── PIN protection ─────────────────────────────────────────
 let pendingSaveAction = null;
@@ -967,6 +1338,10 @@ function checkPin(){
 function showSettings(){
   document.getElementById('toggleTabMode').checked = settings.tabMode;
   document.getElementById('toggleAutoSave').checked = settings.autoSave;
+  // Set active theme button
+  document.querySelectorAll('.theme-btn').forEach(b=>{
+    b.classList.toggle('active', b.dataset.theme === (settings.theme||'dark'));
+  });
   // Load color pickers
   ['sow','harvest','prune'].forEach(type=>{
     const c = settings.colors[type];
@@ -999,6 +1374,20 @@ function applyColors(){
     .legend-dot.harvest-dot{background:${c.harvest}!important;}
     .legend-dot.prune-dot{background:${c.prune}!important;}
   `;
+}
+function applyTheme(theme){
+  document.documentElement.setAttribute('data-theme', theme || 'dark');
+  // Update active state on theme buttons
+  document.querySelectorAll('.theme-btn').forEach(b=>{
+    b.classList.toggle('active', b.dataset.theme === (theme||'dark'));
+  });
+}
+function setTheme(theme){
+  settings.theme = theme;
+  applyTheme(theme);
+  markUnsaved();
+  const names = {dark:'🌑 Dark','light':'☀️ Light',moestuin:'🌱 Moestuin'};
+  toast('Thema: '+(names[theme]||theme));
 }
 function setColor(type, hex){
   if(!/^#[0-9A-Fa-f]{6}$/.test(hex)) return;
@@ -1042,7 +1431,7 @@ function renderCatTabs(){
   const relevantData = activeMainCat === 'Alle' ? data : data.filter(p=>p.mainCat===activeMainCat);
   const cats = ['Alle', ...new Set(relevantData.map(p=>p.cat).filter(Boolean))];
   tabsEl.innerHTML = cats.map(c=>
-    `<button class="cat-tab${c===activeCat?' active':''}" onclick="setCat('${c.replace(/'/g,"\\'")}',this)">${c}</button>`
+    `<button class="cat-tab${c===activeCat?' active':''}" onclick="setCat('${c.replace(/'/g,"\\'")}',this)">${c==='Alle'?'🌱 ':catIcon(c)+' '}${c}</button>`
   ).join('');
 }
 function setCat(cat, el){
@@ -1097,7 +1486,7 @@ function renderView(){
     Object.entries(cats).forEach(([cat,plants])=>{
       if(showCatHeaders){
         const cr=document.createElement('tr');cr.className='cat-row';
-        cr.innerHTML=`<td colspan="13" style="background:linear-gradient(90deg,rgba(76,175,80,0.12),rgba(76,175,80,0.03),transparent);color:#81c784;font-family:'Outfit',sans-serif;font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;padding:7px 16px;border-top:1px solid rgba(76,175,80,0.15);border-bottom:1px solid rgba(76,175,80,0.1);text-shadow:0 0 20px rgba(76,175,80,0.4)">${esc(cat)}</td>`;tb.appendChild(cr);
+        cr.innerHTML=`<td colspan="13" style="background:linear-gradient(90deg,rgba(76,175,80,0.12),rgba(76,175,80,0.03),transparent);color:#81c784;font-family:'Outfit',sans-serif;font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:8px 16px;border-top:1px solid rgba(76,175,80,0.15);border-bottom:1px solid rgba(76,175,80,0.1);text-shadow:0 0 20px rgba(76,175,80,0.4)"><span style="margin-right:8px;font-size:15px">${catIcon(cat)}</span>${esc(cat)}</td>`;tb.appendChild(cr);
       }
       plants.forEach(p=>{
         const hasPrune = p.mainCat === 'Boomgaard';
@@ -1330,12 +1719,24 @@ async function callAI(prompt, maxTokens){
     if(!resp.ok) throw new Error('AI fout '+resp.status);
     const j=await resp.json();return j.choices[0].message.content;
   } else if(cfg.provider==='gemini'){
-    const resp=await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+model+':generateContent?key='+cfg.apiKey,{
-      method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({contents:[{parts:[{text:prompt}]}],generationConfig:{maxOutputTokens:maxTokens||400}})
-    });
-    if(!resp.ok) throw new Error('Gemini fout '+resp.status);
-    const j=await resp.json();return j.candidates[0].content.parts[0].text;
+    let resp;
+    try {
+      resp = await fetch('https://zaaiplan.h5wgpdzjz6.workers.dev', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({prompt, maxTokens: maxTokens||600})
+      });
+    } catch(fetchErr){
+      throw new Error('Verbindingsfout: controleer je internetverbinding ('+fetchErr.message+')');
+    }
+    if(!resp.ok){
+      let errMsg = 'Worker fout '+resp.status;
+      try{ const errJ=await resp.json(); errMsg = errJ.error||errMsg; }catch(e){}
+      throw new Error(errMsg);
+    }
+    const j=await resp.json();
+    if(!j.text) throw new Error('Geen antwoord van AI');
+    return j.text;
   }
   throw new Error('Onbekende provider');
 }
