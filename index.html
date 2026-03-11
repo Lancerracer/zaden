@@ -854,7 +854,7 @@ var SAVED_DATA = [
 var SAVED_NEXT_ID = 221;
 // DATA_END
 // AI_CONFIG_START
-var SAVED_AI_CONFIG = {"provider":"gemini","apiKey":"AIzaSyDrAPvw4ATe8KydVpVLg87PP998XtUOJs0","model":"gemini-1.5-flash"};
+var SAVED_AI_CONFIG = {"provider":"gemini","apiKey":"AIzaSyDrAPvw4ATe8KydVpVLg87PP998XtUOJs0","model":"gemini-1.5-flash-latest"};
 // AI_CONFIG_END
 // SETTINGS_START
 var SAVED_SETTINGS = {"tabMode":false,"autoSave":true,"colors":{"sow":"#ff9800","harvest":"#4caf50","prune":"#ab47bc"}};
@@ -1291,7 +1291,7 @@ async function loadPlantTips(p){
 const PROVIDER_DEFAULTS={
   claude:{model:'claude-haiku-4-5-20251001'},
   openai:{model:'gpt-4o-mini'},
-  gemini:{model:'gemini-1.5-flash'},
+  gemini:{model:'gemini-1.5-flash-latest'},
   openrouter:{model:'openai/gpt-4o-mini'},
 };
 
@@ -1383,7 +1383,7 @@ function saveAISettings(){
 function updateProviderHelp(){
   const p = document.getElementById('aiProvider').value;
   const models = {
-    gemini:'gemini-1.5-flash',
+    gemini:'gemini-1.5-flash-latest',
     claude:'claude-haiku-4-5-20251001',
     openai:'gpt-4o-mini',
     openrouter:'openai/gpt-4o-mini'
