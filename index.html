@@ -1179,7 +1179,7 @@ var SAVED_DATA = [
 var SAVED_NEXT_ID = 221;
 // DATA_END
 // AI_CONFIG_START
-var SAVED_AI_CONFIG = {"provider":"gemini","apiKey":"AIzaSyDrAPvw4ATe8KydVpVLg87PP998XtUOJs0","model":"gemini-1.5-flash-latest"};
+var SAVED_AI_CONFIG = {"provider":"gemini","apiKey":"via-worker","model":""};
 // AI_CONFIG_END
 // SETTINGS_START
 var SAVED_SETTINGS = {"tabMode":false,"autoSave":true,"theme":"dark","colors":{"sow":"#ff9800","harvest":"#4caf50","prune":"#ab47bc"}};
@@ -1688,16 +1688,8 @@ async function callAI(prompt, maxTokens){
   const cfg = AI_CONFIG;
   const model = cfg.model||(PROVIDER_DEFAULTS[cfg.provider]||PROVIDER_DEFAULTS.claude).model;
 
-  if(!cfg.apiKey){
-    // Fallback: via Claude.ai proxy
-    const resp = await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:maxTokens||400,
-        messages:[{role:'user',content:prompt}]})
-    });
-    if(!resp.ok) throw new Error('Geen AI gekoppeld. Klik op 🤖 AI om een sleutel in te stellen.');
-    const j=await resp.json();
-    return j.content.map(c=>c.text||'').join('');
+  if(!cfg.apiKey && cfg.provider !== 'gemini'){
+    throw new Error('Geen AI gekoppeld. Klik op 🤖 AI om een sleutel in te stellen.');
   }
 
   if(cfg.provider==='claude'||cfg.provider===''){
