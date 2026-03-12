@@ -1971,7 +1971,7 @@ async function loadPlantTips(p){
   if(typeof PLANT_TIPS !== 'undefined' && PLANT_TIPS[p.name]){
     const cached = PLANT_TIPS[p.name];
     document.getElementById('infoTips').innerHTML =
-      '<h3 style="font-family:'Outfit',sans-serif;font-weight:800;color:var(--green-mid);margin-bottom:10px;font-size:15px;letter-spacing:-.3px">🌿 Tips voor '+esc(p.name)+'</h3>' + cached;
+      '<h3 style="font-family:Outfit,sans-serif;font-weight:800;color:var(--green-mid);margin-bottom:10px;font-size:15px;letter-spacing:-.3px">🌿 Tips voor '+esc(p.name)+'</h3>' + cached;
     return;
   }
   // Fallback to AI
