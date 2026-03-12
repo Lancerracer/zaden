@@ -744,6 +744,86 @@ td.cur-col .ci.empty { background: rgba(76,175,80,0.04); }
   .app { padding: 10px 10px 80px; }
   h1 { font-size: 28px; }
 }
+
+/* ══ NAVIGATIE TABS ═══════════════════════════════════════ */
+.nav-tabs {
+  display: flex; gap: 4px; margin-bottom: 16px;
+  border-bottom: 2px solid var(--border2);
+  padding-bottom: 0;
+}
+.nav-tab {
+  background: transparent; border: none; border-bottom: 3px solid transparent;
+  padding: 10px 20px; font-family: 'Outfit', sans-serif;
+  font-size: 14px; font-weight: 700; cursor: pointer;
+  color: var(--ink-light); transition: all .2s;
+  margin-bottom: -2px; border-radius: 6px 6px 0 0;
+}
+.nav-tab:hover { color: var(--ink); background: var(--surface); }
+.nav-tab.active {
+  color: var(--green-bright); border-bottom-color: var(--green-bright);
+  background: var(--surface);
+}
+
+/* ══ GIDS ════════════════════════════════════════════════ */
+.gids-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+}
+@media (max-width: 700px) { .gids-grid { grid-template-columns: 1fr; } }
+
+.gids-card {
+  background: var(--surface); border: 1px solid var(--border2);
+  border-radius: var(--radius); padding: 20px;
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+}
+.gids-card-wide { grid-column: 1 / -1; }
+.gids-card-icon { font-size: 28px; margin-bottom: 8px; }
+.gids-card h3 {
+  font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 800;
+  color: var(--green-bright); margin: 0 0 10px 0; letter-spacing: -.3px;
+}
+.gids-card p { font-size: 12px; color: var(--ink-mid); margin: 0 0 10px 0; line-height: 1.6; }
+.gids-card ul { margin: 0; padding-left: 16px; }
+.gids-card ul li { font-size: 12px; color: var(--ink-mid); margin-bottom: 6px; line-height: 1.5; }
+.gids-card ul li strong { color: var(--ink); }
+
+/* Combinaties */
+.gids-combo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 4px; }
+@media (max-width: 500px) { .gids-combo-grid { grid-template-columns: 1fr; } }
+.gids-combo { border-radius: 8px; padding: 10px; }
+.gids-combo.good { background: rgba(76,175,80,0.08); border: 1px solid rgba(76,175,80,0.25); }
+.gids-combo.bad { background: rgba(229,57,53,0.08); border: 1px solid rgba(229,57,53,0.25); }
+.gids-combo-title { font-size: 11px; font-weight: 700; margin-bottom: 6px; color: var(--ink); }
+.gids-combo-item { font-size: 11px; color: var(--ink-mid); margin-bottom: 5px; line-height: 1.4; }
+.gids-combo-item strong { color: var(--ink); }
+
+/* Plagen */
+.gids-pest-list { display: flex; flex-direction: column; gap: 8px; }
+.gids-pest { background: var(--surface2); border-radius: 8px; padding: 10px 12px; border: 1px solid var(--border); }
+.gids-pest-name { font-size: 12px; font-weight: 700; color: var(--ink); margin-bottom: 3px; }
+.gids-pest-tip { font-size: 11px; color: var(--ink-mid); line-height: 1.5; }
+
+/* Kas */
+.gids-kas-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+@media (max-width: 500px) { .gids-kas-grid { grid-template-columns: 1fr; } }
+.gids-kas-col { background: var(--surface2); border-radius: 8px; padding: 10px 12px; border: 1px solid var(--border); }
+.gids-kas-title { font-size: 11px; font-weight: 700; color: var(--ink); margin-bottom: 8px; }
+.gids-kas-item { font-size: 11px; color: var(--ink-mid); margin-bottom: 6px; line-height: 1.4; }
+.gids-kas-item strong { color: var(--ink); }
+.gids-tip-box { background: rgba(76,175,80,0.08); border: 1px solid rgba(76,175,80,0.25); border-radius: 8px; padding: 12px; }
+.gids-tip-box strong { font-size: 12px; color: var(--green-bright); display: block; margin-bottom: 6px; }
+.gids-tip-box ul { margin: 0; padding-left: 16px; }
+.gids-tip-box ul li { font-size: 11px; color: var(--ink-mid); margin-bottom: 4px; line-height: 1.5; }
+
+/* Vruchtwisseling */
+.gids-rotation { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 10px; margin: 12px 0; }
+@media (max-width: 600px) { .gids-rotation { grid-template-columns: 1fr 1fr; } }
+.gids-rotation-item { border: 1px solid; border-radius: 10px; padding: 12px; }
+.gids-rotation-year { font-size: 11px; font-weight: 800; color: var(--ink); margin-bottom: 4px; letter-spacing: .05em; text-transform: uppercase; }
+.gids-rotation-cat { font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+.gids-rotation-plants { font-size: 11px; color: var(--ink-mid); margin-bottom: 6px; line-height: 1.4; }
+.gids-rotation-note { font-size: 10px; color: var(--ink-light); font-style: italic; }
+
 </style>
 </head>
 <body>
@@ -766,6 +846,15 @@ td.cur-col .ci.empty { background: rgba(76,175,80,0.04); }
     <button class="btn primary" onclick="showAddModal()">+ Toevoegen <span class="ai-badge">AI</span></button>
     <button class="btn" id="aiSettingsBtn" onclick="showAISettings()">🤖 AI</button>
   </div>
+
+  <!-- Top navigation -->
+  <div class="nav-tabs" id="navTabs">
+    <button class="nav-tab active" onclick="showSection('planner',this)">📅 Planner</button>
+    <button class="nav-tab" onclick="showSection('gids',this)">📖 Moestuin Gids</button>
+  </div>
+
+  <!-- PLANNER SECTION -->
+  <div id="sectionPlanner">
 
   <!-- Main category tabs (always visible) -->
   <div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;" id="mainCatTabs">
@@ -812,6 +901,173 @@ td.cur-col .ci.empty { background: rgba(76,175,80,0.04); }
     </div>
   </div>
   <div class="stats" id="stats"></div>
+  </div><!-- end sectionPlanner -->
+
+  <!-- GIDS SECTION -->
+  <div id="sectionGids" style="display:none">
+    <div class="gids-grid">
+
+      <div class="gids-card">
+        <div class="gids-card-icon">🌱</div>
+        <h3>Inrichting van je moestuin</h3>
+        <p>Een goede indeling begint met het kennen van je tuin. Let op de volgende zaken:</p>
+        <ul>
+          <li><strong>Zonligging</strong> — de meeste groenten hebben 6+ uur zon per dag nodig. Zet hoge planten (maïs, bonen) op het noorden zodat ze de rest niet beschaduwen.</li>
+          <li><strong>Vruchtwisseling</strong> — plant niet elk jaar dezelfde familie op dezelfde plek. Dit voorkomt ziektes en uitputting van de bodem.</li>
+          <li><strong>Paden</strong> — zorg voor paden van minimaal 40cm zodat je overal bij kunt zonder de grond te verdichten.</li>
+          <li><strong>Raised beds</strong> — verhoogde bakken van 30-40cm hoog zijn rugvriendelijk, warmen sneller op en hebben minder onkruid.</li>
+          <li><strong>Watertoevoer</strong> — plan je tuin dicht bij een waterpunt, of leg een regenwaterton aan.</li>
+        </ul>
+      </div>
+
+      <div class="gids-card">
+        <div class="gids-card-icon">🤝</div>
+        <h3>Goede buren: combinatieteelt</h3>
+        <p>Sommige gewassen helpen elkaar, andere bijten elkaar. Gebruik dit als leidraad:</p>
+        <div class="gids-combo-grid">
+          <div class="gids-combo good">
+            <div class="gids-combo-title">✅ Goede combinaties</div>
+            <div class="gids-combo-item"><strong>Tomaat + Basilicum</strong> — basilicum houdt bladluizen weg en verbetert de smaak</div>
+            <div class="gids-combo-item"><strong>Wortel + Ui</strong> — wortelvlieg mijdt de geur van ui, en andersom</div>
+            <div class="gids-combo-item"><strong>Kool + Dille</strong> — dille trekt sluipwespen aan die rupsen bestrijden</div>
+            <div class="gids-combo-item"><strong>Sla + Radijs</strong> — radijs groeit snel en markeert de rij; sla geeft schaduw</div>
+            <div class="gids-combo-item"><strong>Bonen + Komkommer</strong> — bonen fixeren stikstof wat komkommer nodig heeft</div>
+            <div class="gids-combo-item"><strong>Courgette + Nasturtium</strong> — nasturtium lokt bladluizen weg als lokplant</div>
+          </div>
+          <div class="gids-combo bad">
+            <div class="gids-combo-title">❌ Slechte combinaties</div>
+            <div class="gids-combo-item"><strong>Ui + Bonen/Erwten</strong> — remmen elkaars groei sterk</div>
+            <div class="gids-combo-item"><strong>Venkel + bijna alles</strong> — venkel stoot de meeste gewassen af; plant apart</div>
+            <div class="gids-combo-item"><strong>Tomaat + Kool</strong> — concurreren om voedingsstoffen, verhogen ziektedruk</div>
+            <div class="gids-combo-item"><strong>Aardappel + Tomaat</strong> — beide vatbaar voor Phytophthora, verspreiden het naar elkaar</div>
+            <div class="gids-combo-item"><strong>Wortel + Dille</strong> — dille remt de groei van wortels aanzienlijk</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="gids-card">
+        <div class="gids-card-icon">🐛</div>
+        <h3>Ongedierte voorkomen &amp; bestrijden</h3>
+        <p>Preventie is altijd beter dan bestrijden. Zo houd je het in de hand:</p>
+        <div class="gids-pest-list">
+          <div class="gids-pest">
+            <div class="gids-pest-name">🐌 Slakken</div>
+            <div class="gids-pest-tip">Strooi koffiegrond of schelpenkalk rondom planten. IJzeren slakkenkorrels zijn effectief maar gebruik ze spaarzaam. Egels en kikkers zijn natuurlijke vijanden — verwelkom ze.</div>
+          </div>
+          <div class="gids-pest">
+            <div class="gids-pest-name">🦟 Bladluis</div>
+            <div class="gids-pest-tip">Spuit met verdund groene zeepwater (1 tl op 1L). Plant afrikaantjes als lokplant. Lieveheersbeestjes zijn de beste bondgenoot — gebruik geen pesticiden.</div>
+          </div>
+          <div class="gids-pest">
+            <div class="gids-pest-name">🦋 Koolvlinder rupsen</div>
+            <div class="gids-pest-tip">Dek koolgewassen af met insectengaas direct na het planten. Handmatig verwijderen werkt goed bij kleine aantallen. Bacillus thuringiensis (Bt) is een biologisch middel.</div>
+          </div>
+          <div class="gids-pest">
+            <div class="gids-pest-name">🪲 Wortelvlieg</div>
+            <div class="gids-pest-tip">Plant wortelen naast uien of prei. Gebruik fijne vliesgaas (0,8mm maaswijdte). Zaai later in het seizoen (na half mei) om de eerste generatie te missen.</div>
+          </div>
+          <div class="gids-pest">
+            <div class="gids-pest-name">🐭 Muizen &amp; mollen</div>
+            <div class="gids-pest-tip">Plant bollen in gaaskorven. Mollen zijn beschermd maar kunnen worden afgeschrikt met trillingspennen of vlierbessen.</div>
+          </div>
+          <div class="gids-pest">
+            <div class="gids-pest-name">🍄 Schimmelziekten</div>
+            <div class="gids-pest-tip">Zorg voor goede luchtcirculatie door niet te dicht te planten. Water geven aan de voet, nooit over het blad. Verwijder aangetast blad direct en gooi het niet op de composthoop.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="gids-card">
+        <div class="gids-card-icon">🏡</div>
+        <h3>Werken met een kas</h3>
+        <p>Een kas verlengt je groeiseizoen aanzienlijk — maar niet elk gewas profiteert er even veel van.</p>
+        <div class="gids-kas-grid">
+          <div class="gids-kas-col">
+            <div class="gids-kas-title">✅ Ideaal voor de kas</div>
+            <div class="gids-kas-item"><strong>Tomaten</strong> — houden van warmte en droge lucht; buiten gevoelig voor Phytophthora</div>
+            <div class="gids-kas-item"><strong>Paprika &amp; Peper</strong> — hebben een lang en warm seizoen nodig</div>
+            <div class="gids-kas-item"><strong>Komkommer &amp; Meloen</strong> — warmteminnend, profiteren enorm van bescherming</div>
+            <div class="gids-kas-item"><strong>Aubergine</strong> — buiten in NL vrijwel niet te telen, in kas wel</div>
+            <div class="gids-kas-item"><strong>Vroege sla &amp; spinazie</strong> — kan al in februari worden gezaaid</div>
+          </div>
+          <div class="gids-kas-col">
+            <div class="gids-kas-title">⚠️ Beperkt geschikt</div>
+            <div class="gids-kas-item"><strong>Courgette</strong> — groeit buiten prima, in kas kan het te warm en vochtig worden</div>
+            <div class="gids-kas-item"><strong>Bonen</strong> — behoeven bestuiving door insecten; kas kan dit belemmeren</div>
+            <div class="gids-kas-item"><strong>Koolsoorten</strong> — hebben juist koude nodig voor goede kieming en smaak</div>
+          </div>
+        </div>
+        <div class="gids-tip-box">
+          <strong>💡 Kas tips</strong>
+          <ul>
+            <li>Ventileer dagelijks — te hoge luchtvochtigheid veroorzaakt schimmel</li>
+            <li>Witkalk op het glas in de zomer voorkomt verbranding</li>
+            <li>Gebruik een thermometer — 's nachts niet onder 10°C voor warmteminnende gewassen</li>
+            <li>In Drenthe: onverwarmde kas geeft gemiddeld 4-6 weken eerder seizoen</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="gids-card gids-card-wide">
+        <div class="gids-card-icon">🔄</div>
+        <h3>Vruchtwisseling schema</h3>
+        <p>Verdeel je tuin in 4 vakken en roteer elk jaar. Dit voorkomt ziekteophoping en houdt de bodem gezond.</p>
+        <div class="gids-rotation">
+          <div class="gids-rotation-item" style="border-color:rgba(255,152,0,0.4);background:rgba(255,152,0,0.08)">
+            <div class="gids-rotation-year">Vak A</div>
+            <div class="gids-rotation-cat">🍅 Vruchtgroenten</div>
+            <div class="gids-rotation-plants">Tomaat, paprika, komkommer, courgette, pompoen</div>
+            <div class="gids-rotation-note">Hoge stikstofbehoefte — veel compost toevoegen</div>
+          </div>
+          <div class="gids-rotation-item" style="border-color:rgba(76,175,80,0.4);background:rgba(76,175,80,0.08)">
+            <div class="gids-rotation-year">Vak B</div>
+            <div class="gids-rotation-cat">🥦 Koolsoorten</div>
+            <div class="gids-rotation-plants">Broccoli, bloemkool, spruitjes, koolraap, boerenkool</div>
+            <div class="gids-rotation-note">Bekalken vóór het planten — kool houdt van kalk</div>
+          </div>
+          <div class="gids-rotation-item" style="border-color:rgba(171,71,188,0.4);background:rgba(171,71,188,0.08)">
+            <div class="gids-rotation-year">Vak C</div>
+            <div class="gids-rotation-cat">🥕 Wortelgroenten &amp; uien</div>
+            <div class="gids-rotation-plants">Wortel, pastinaak, ui, prei, knoflook, biet</div>
+            <div class="gids-rotation-note">Geen verse compost — geeft misvormde wortels</div>
+          </div>
+          <div class="gids-rotation-item" style="border-color:rgba(41,182,246,0.4);background:rgba(41,182,246,0.08)">
+            <div class="gids-rotation-year">Vak D</div>
+            <div class="gids-rotation-cat">🫘 Peulvruchten &amp; bladgroenten</div>
+            <div class="gids-rotation-plants">Bonen, erwten, sla, spinazie, snijbiet</div>
+            <div class="gids-rotation-note">Bonen fixeren stikstof — goed voor de bodem</div>
+          </div>
+        </div>
+        <p style="font-size:11px;color:var(--ink-light);margin-top:12px;text-align:center">Elk jaar schuift elk vak één positie op: A→B→C→D→A</p>
+      </div>
+
+      <div class="gids-card">
+        <div class="gids-card-icon">🌿</div>
+        <h3>Bodemgezondheid &amp; bemesting</h3>
+        <ul>
+          <li><strong>Compost</strong> — voeg elk voorjaar 5-10cm rijpe compost toe. De basis van een gezonde moestuin.</li>
+          <li><strong>Groenbemesters</strong> — zaai na de oogst rogge, phacelia of klaver om de bodem te beschermen en stikstof te binden.</li>
+          <li><strong>Mulchen</strong> — dek de grond af met gras, stro of houtsnippers. Houdt vocht vast en onderdrukt onkruid.</li>
+          <li><strong>Niet omspijten</strong> — bodemstructuur en bodemleven blijven intact bij minimale grondbewerking (no-dig methode).</li>
+          <li><strong>pH meten</strong> — de meeste groenten groeien het best bij pH 6.5-7.0. Kalk verhoogt de pH, zwavel verlaagt hem.</li>
+        </ul>
+      </div>
+
+      <div class="gids-card">
+        <div class="gids-card-icon">💧</div>
+        <h3>Water geven</h3>
+        <ul>
+          <li><strong>'s Ochtends water geven</strong> — het blad droogt overdag op, wat schimmelziekten voorkomt.</li>
+          <li><strong>Aan de voet water geven</strong> — nooit over het blad, zeker niet bij tomaten en kool.</li>
+          <li><strong>Diep en weinig</strong> — liever 1x per week grondig dan elke dag een beetje. Diepe beworteling = droogteresistenter.</li>
+          <li><strong>Regenwater</strong> — beter dan leidingwater door lagere pH en geen chloor. Leg een ton van 1000L aan.</li>
+          <li><strong>Druppelirrigatie</strong> — investeer in een druppelsysteem bij grote tuinen. Bespaart water en tijd.</li>
+        </ul>
+      </div>
+
+    </div>
+  </div><!-- end sectionGids -->
+
 </div>
 
 <div id="toast"></div>
@@ -1273,6 +1529,15 @@ function _doSaveToFile(){
 }
 
 
+
+
+// ── Section navigation ─────────────────────────────────────
+function showSection(name, btn) {
+  document.getElementById('sectionPlanner').style.display = name === 'planner' ? '' : 'none';
+  document.getElementById('sectionGids').style.display = name === 'gids' ? '' : 'none';
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+}
 
 // ── Owner login ────────────────────────────────────────────
 function showOwnerLogin(){
