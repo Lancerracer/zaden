@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🌿 Moestuin Plattegrond</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Playfair+Display:wght@700&display=swap');
+  :root {
+    --bg:#f5f0e8;--surface:#fff9f0;--surface2:#ede7d9;--border:#c8b89a;
+    --text:#2d2416;--text2:#6b5740;--accent:#4a7c59;
+    --warn:#d95b3a;--warn-bg:#fff0ec;--good:#4a7c59;--good-bg:#edf7ee;
+    --grid-line:rgba(100,80,50,0.18);
+    --cell:24px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;}
+
+  header{background:var(--accent);color:white;padding:10px 16px;display:flex;align-items:center;gap:10px;box-shadow:0 2px 8px rgba(0,0,0,0.2);flex-wrap:wrap;}
+  header h1{font-family:'Playfair Display',serif;font-size:1.3rem;flex:1;}
+  .hc{display:flex;gap:7px;align-items:center;flex-wrap:wrap;font-size:0.8rem;opacity:0.95;}
+  .hc label{display:flex;align-items:center;gap:4px;}
+  .hc input[type=number]{width:52px;padding:3px 5px;border:none;border-radius:6px;background:rgba(255,255,255,0.22);color:white;font-family:'Nunito',sans-serif;font-size:0.85rem;text-align:center;}
+  .hc input[type=number]:focus{outline:2px solid rgba(255,255,255,0.55);}
+  .btn{padding:5px 12px;border:none;border-radius:7px;cursor:pointer;font-family:'Nunito',sans-serif;font-weight:700;font-size:0.82rem;transition:all 0.13s;}
+  .btn:active{transform:scale(0.96);}
+  .btn-light{background:rgba(255,255,255,0.25);color:white;}
+  .btn-light:hover{background:rgba(255,255,255,0.38);}
+  .btn-danger{background:#b84428;color:white;}
+  .btn-danger:hover{background:#9a3520;}
+  .sep{width:1px;height:22px;background:rgba(255,255,255,0.3);}
+
+  .main{display:flex;flex:1;overflow:hidden;height:calc(100vh - 50px);}
+
+  .sidebar{width:195px;min-width:195px;background:var(--surface);border-right:2px solid var(--border);display:flex;flex-direction:column;overflow:hidden;}
+  .sidebar-title{padding:9px 11px;font-weight:800;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--text2);border-bottom:1px solid var(--border);background:var(--surface2);}
+  .search-box{padding:7px;border-bottom:1px solid var(--border);}
+  .search-box input{width:100%;padding:4px 8px;border:1.5px solid var(--border);border-radius:7px;font-family:'Nunito',sans-serif;font-size:0.8rem;background:var(--bg);color:var(--text);}
+  .search-box input:focus{outline:none;border-color:var(--accent);}
+  .crop-list{overflow-y:auto;flex:1;padding:5px;display:flex;flex-direction:column;gap:3px;}
+  .crop-item{display:flex;align-items:center;gap:6px;padding:5px 8px;border-radius:7px;cursor:grab;user-select:none;font-size:0.79rem;font-weight:600;border:1.5px solid transparent;transition:all 0.12s;background:var(--surface2);}
+  .crop-item:hover{border-color:var(--accent);background:var(--good-bg);}
+  .crop-item:active{cursor:grabbing;}
+  .ci-emoji{font-size:1.05rem;}
+  .ci-info{display:flex;flex-direction:column;gap:1px;flex:1;min-width:0;}
+  .ci-name{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .ci-size{font-size:0.67rem;color:var(--text2);font-weight:600;}
+
+  .garden-area{flex:1;overflow:auto;padding:16px;display:flex;flex-direction:column;align-items:flex-start;gap:8px;}
+  .garden-wrap{position:relative;background:#c8b472;border:3px solid #8b6914;border-radius:4px;box-shadow:0 4px 20px rgba(60,40,10,0.25);}
+  .ruler-corner{position:absolute;top:0;left:0;width:34px;height:34px;background:var(--surface2);border-right:2px solid var(--border);border-bottom:2px solid var(--border);z-index:5;font-size:0.5rem;color:var(--text2);display:flex;align-items:center;justify-content:center;font-weight:700;}
+  .ruler-x{position:absolute;top:0;left:34px;height:34px;display:flex;align-items:flex-end;z-index:4;background:var(--surface2);border-bottom:2px solid var(--border);overflow:hidden;}
+  .ruler-y{position:absolute;top:34px;left:0;width:34px;display:flex;flex-direction:column;align-items:flex-end;z-index:4;background:var(--surface2);border-right:2px solid var(--border);overflow:hidden;}
+  .rlbl{font-size:0.54rem;color:var(--text2);font-weight:700;text-align:center;flex-shrink:0;display:flex;align-items:flex-end;justify-content:center;}
+  #garden-canvas-wrap{position:absolute;top:34px;left:34px;}
+  #garden-grid{position:relative;background:
+    repeating-linear-gradient(0deg,transparent,transparent calc(var(--cell) - 1px),var(--grid-line) calc(var(--cell) - 1px),var(--grid-line) var(--cell)),
+    repeating-linear-gradient(90deg,transparent,transparent calc(var(--cell) - 1px),var(--grid-line) calc(var(--cell) - 1px),var(--grid-line) var(--cell)),
+    #8fbc5a;}
+
+  .grid-cell{position:absolute;transition:background 0.08s;}
+  .grid-cell.drag-over{background:rgba(255,255,255,0.38)!important;}
+  .grid-cell.drop-blocked{background:rgba(217,91,58,0.28)!important;}
+
+  .placed-crop{position:absolute;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:4px;cursor:pointer;font-weight:700;text-align:center;line-height:1.1;padding:2px;border:2px solid rgba(255,255,255,0.55);overflow:hidden;transition:transform 0.1s,box-shadow 0.1s;z-index:2;user-select:none;box-shadow:0 1px 4px rgba(0,0,0,0.22);}
+  .placed-crop:hover{transform:scale(1.04);box-shadow:0 2px 10px rgba(0,0,0,0.3);z-index:10;}
+  .placed-crop.warn-border{border:2.5px solid var(--warn)!important;box-shadow:0 0 0 2px var(--warn)!important;}
+  .placed-crop .crop-del{position:absolute;top:1px;right:1px;width:13px;height:13px;border-radius:50%;background:rgba(0,0,0,0.45);color:white;font-size:0.58rem;display:none;align-items:center;justify-content:center;cursor:pointer;z-index:20;}
+  .placed-crop:hover .crop-del{display:flex;}
+
+  .info-panel{width:215px;min-width:215px;background:var(--surface);border-left:2px solid var(--border);display:flex;flex-direction:column;overflow-y:auto;}
+  .info-panel-title{padding:9px 11px;font-weight:800;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--text2);border-bottom:1px solid var(--border);background:var(--surface2);}
+  .info-content{padding:11px;flex:1;}
+  .info-empty{color:var(--text2);font-size:0.8rem;text-align:center;margin-top:18px;line-height:1.6;}
+  .info-crop-name{font-family:'Playfair Display',serif;font-size:1.05rem;margin-bottom:3px;}
+  .info-section{margin-top:9px;}
+  .info-section-title{font-size:0.7rem;font-weight:800;text-transform:uppercase;letter-spacing:0.06em;color:var(--text2);margin-bottom:4px;}
+  .info-tag{display:inline-block;padding:2px 7px;border-radius:10px;font-size:0.72rem;font-weight:700;margin:2px;}
+  .tag-good{background:var(--good-bg);color:var(--good);border:1px solid #b3d9be;}
+  .tag-bad{background:var(--warn-bg);color:var(--warn);border:1px solid #f0bfb0;}
+  .info-spacing{font-size:0.78rem;color:var(--text2);margin-top:4px;font-weight:700;}
+
+  /* TABS */
+  .sidebar-tabs{display:flex;border-bottom:2px solid var(--border);}
+  .stab{flex:1;padding:7px 4px;font-size:0.75rem;font-weight:800;text-align:center;cursor:pointer;border:none;background:var(--surface2);color:var(--text2);transition:all 0.12s;letter-spacing:0.03em;}
+  .stab.active{background:var(--surface);color:var(--accent);border-bottom:2px solid var(--accent);margin-bottom:-2px;}
+  .stab:hover:not(.active){background:var(--good-bg);}
+  .tab-panel{display:none;flex:1;overflow:hidden;flex-direction:column;}
+  .tab-panel.active{display:flex;}
+
+  /* PATH TILES */
+  .path-config{padding:8px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:6px;}
+  .path-config label{font-size:0.75rem;font-weight:700;color:var(--text2);}
+  .path-config input[type=number]{width:52px;padding:3px 6px;border:1.5px solid var(--border);border-radius:6px;font-family:'Nunito',sans-serif;font-size:0.82rem;background:var(--bg);color:var(--text);}
+  .path-config input[type=color]{width:36px;height:24px;border:1.5px solid var(--border);border-radius:6px;cursor:pointer;padding:1px;}
+  .path-config .row{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+  .tile-presets{padding:6px 8px;border-bottom:1px solid var(--border);}
+  .tile-presets-title{font-size:0.7rem;font-weight:800;text-transform:uppercase;color:var(--text2);margin-bottom:5px;}
+  .preset-btn{padding:4px 8px;border:1.5px solid var(--border);border-radius:6px;background:var(--surface2);cursor:pointer;font-family:'Nunito',sans-serif;font-size:0.75rem;font-weight:700;color:var(--text);transition:all 0.1s;margin:2px 2px 2px 0;}
+  .preset-btn:hover{border-color:var(--accent);background:var(--good-bg);}
+  .tile-list{overflow-y:auto;flex:1;padding:5px;display:flex;flex-direction:column;gap:3px;}
+  .tile-item{display:flex;align-items:center;gap:7px;padding:5px 8px;border-radius:7px;cursor:grab;user-select:none;font-size:0.79rem;font-weight:600;border:1.5px solid transparent;transition:all 0.12s;background:var(--surface2);}
+  .tile-item:hover{border-color:#8b6914;background:#f5ecd4;}
+  .tile-item:active{cursor:grabbing;}
+  .tile-swatch{width:28px;height:20px;border-radius:4px;border:1px solid rgba(0,0,0,0.15);flex-shrink:0;}
+  .tile-info{display:flex;flex-direction:column;gap:1px;flex:1;min-width:0;}
+  .tile-name{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .tile-dim{font-size:0.67rem;color:var(--text2);font-weight:600;}
+
+  /* PLACED TILES */
+  .placed-tile{position:absolute;z-index:1;cursor:pointer;border:1px solid rgba(0,0,0,0.12);box-sizing:border-box;}
+  .placed-tile:hover{filter:brightness(1.08);z-index:5;}
+  .placed-tile .tile-del{position:absolute;top:1px;right:1px;width:13px;height:13px;border-radius:50%;background:rgba(0,0,0,0.45);color:white;font-size:0.58rem;display:none;align-items:center;justify-content:center;cursor:pointer;z-index:20;}
+  .placed-tile:hover .tile-del{display:flex;}
+  .tile-pattern-stoep{background-image:repeating-linear-gradient(90deg,rgba(255,255,255,0.15) 0px,rgba(255,255,255,0.15) 1px,transparent 1px,transparent 30px),repeating-linear-gradient(0deg,rgba(255,255,255,0.15) 0px,rgba(255,255,255,0.15) 1px,transparent 1px,transparent 30px);}
+  .erase-mode-active .grid-cell{cursor:crosshair!important;}
+  .mode-btn{padding:5px 10px;border:1.5px solid var(--border);border-radius:7px;background:var(--surface2);cursor:pointer;font-family:'Nunito',sans-serif;font-size:0.75rem;font-weight:700;color:var(--text);transition:all 0.12s;margin:2px;}
+  .mode-btn.active{background:var(--accent);color:white;border-color:var(--accent);}
+  .mode-btn:hover:not(.active){background:var(--good-bg);}
+
+  #notifications{position:fixed;bottom:18px;right:18px;z-index:100;display:flex;flex-direction:column;gap:7px;max-width:310px;}
+  .notif{padding:9px 13px;border-radius:9px;font-size:0.82rem;font-weight:600;box-shadow:0 4px 14px rgba(0,0,0,0.13);animation:slideIn 0.2s ease;display:flex;align-items:flex-start;gap:7px;cursor:pointer;}
+  .notif-warn{background:var(--warn-bg);border:1.5px solid var(--warn);color:var(--warn);}
+  .notif-good{background:var(--good-bg);border:1.5px solid var(--good);color:var(--good);}
+  .notif-info{background:#fff8e6;border:1.5px solid #c89a30;color:#7a5a10;}
+  @keyframes slideIn{from{transform:translateX(18px);opacity:0;}to{transform:translateX(0);opacity:1;}}
+
+  .ctx-menu{position:fixed;background:var(--surface);border:1.5px solid var(--border);border-radius:9px;box-shadow:0 4px 18px rgba(0,0,0,0.14);z-index:300;overflow:hidden;min-width:155px;display:none;}
+  .ctx-item{padding:8px 13px;font-size:0.82rem;cursor:pointer;display:flex;align-items:center;gap:7px;}
+  .ctx-item:hover{background:var(--surface2);}
+  .ctx-item.danger{color:var(--warn);}
+  .ctx-sep{height:1px;background:var(--border);}
+
+  .legend{display:flex;gap:10px;flex-wrap:wrap;align-items:center;font-size:0.72rem;color:var(--text2);padding:5px 12px;background:var(--surface2);border-top:1px solid var(--border);}
+  .legend-dot{width:9px;height:9px;border-radius:2px;display:inline-block;margin-right:3px;vertical-align:middle;}
+
+  .cat-group-header{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:6px 10px;font-size:0.75rem;font-weight:800;
+    text-transform:uppercase;letter-spacing:0.06em;
+    color:var(--accent);background:var(--surface2);
+    border-radius:7px;cursor:pointer;margin:3px 0 1px 0;
+    border:1.5px solid var(--border);user-select:none;
+    transition:background 0.12s;
+  }
+  .cat-group-header:hover{background:var(--good-bg);}
+  .cat-arrow{font-size:0.65rem;color:var(--text2);}
+  .cat-group-body{
+    display:flex;flex-direction:column;gap:3px;
+    padding:2px 0 4px 8px;
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>🌿 Moestuin Plattegrond</h1>
+  <div class="hc">
+    <label>Breedte: <input type="number" id="gardenW" value="400" min="10" max="2000"> cm</label>
+    <label>Lengte: <input type="number" id="gardenH" value="300" min="10" max="2000"> cm</label>
+    <div class="sep"></div>
+    <label>Zoom: <input type="number" id="zoomPx" value="24" min="10" max="60"> px/10cm</label>
+    <button class="btn btn-light" onclick="applySize()">🔄 Toepassen</button>
+    <button class="btn btn-danger" onclick="clearGarden()">🗑️ Leegmaken</button>
+  </div>
+</header>
+
+<div class="main">
+  <div class="sidebar">
+    <div class="sidebar-tabs">
+      <button class="stab active" onclick="switchTab('crops')">🌱 Gewassen</button>
+      <button class="stab" onclick="switchTab('paths')">🧱 Paden</button>
+    </div>
+
+    <!-- GEWASSEN TAB -->
+    <div class="tab-panel active" id="tab-crops">
+      <div class="search-box"><input type="text" id="cropSearch" placeholder="Zoeken..." oninput="filterCrops()"></div>
+      <div class="crop-list" id="cropList"></div>
+    </div>
+
+    <!-- PADEN TAB -->
+    <div class="tab-panel" id="tab-paths">
+      <div class="path-config">
+        <div class="tile-presets-title">Snelle presets</div>
+        <div>
+          <button class="preset-btn" onclick="applyPreset(30,30,'#b0a080','Tegel 30×30')">30×30</button>
+          <button class="preset-btn" onclick="applyPreset(60,60,'#b0a080','Stoeptegel 60×60')">60×60</button>
+          <button class="preset-btn" onclick="applyPreset(20,60,'#c8b090','Tegel 20×60')">20×60</button>
+          <button class="preset-btn" onclick="applyPreset(10,20,'#c8b090','Klinker 10×20')">10×20</button>
+          <button class="preset-btn" onclick="applyPreset(20,20,'#c0a070','Klinker 20×20')">20×20</button>
+          <button class="preset-btn" onclick="applyPreset(40,40,'#a09070','Tegel 40×40')">40×40</button>
+        </div>
+        <div class="row">
+          <label>Breedte (cm): <input type="number" id="tileW" value="30" min="10" max="200" step="10"></label>
+          <label>Diepte (cm): <input type="number" id="tileH" value="30" min="10" max="200" step="10"></label>
+        </div>
+        <div class="row">
+          <label>Kleur: <input type="color" id="tileColor" value="#b0a080"></label>
+          <label style="flex:1">Naam: <input type="text" id="tileName" value="Tegel" style="width:100%;padding:3px 6px;border:1.5px solid var(--border);border-radius:6px;font-size:0.8rem;font-family:'Nunito',sans-serif;"></label>
+        </div>
+        <button class="btn btn-light" style="background:var(--accent);color:white;width:100%" onclick="addCustomTile()">+ Toevoegen aan lijst</button>
+      </div>
+      <div class="tile-list" id="tileList"></div>
+    </div>
+  </div>
+
+  <div class="garden-area">
+    <div class="garden-wrap" id="gardenWrap">
+      <div class="ruler-corner">cm</div>
+      <div class="ruler-x" id="rulerX"></div>
+      <div class="ruler-y" id="rulerY"></div>
+      <div id="garden-canvas-wrap">
+        <div id="garden-grid"></div>
+      </div>
+    </div>
+    <div class="legend">
+      💡 Sleep gewassen of tegels naar het raster &nbsp;·&nbsp; elk vakje = 10×10 cm
+      &nbsp;·&nbsp;<span class="legend-dot" style="background:var(--warn)"></span>Slechte buur
+      &nbsp;·&nbsp;<span class="legend-dot" style="background:var(--good)"></span>Goede buur
+      &nbsp;·&nbsp;<span class="legend-dot" style="background:#b0a080;border:1px solid #8b6914"></span>Pad/tegel
+    </div>
+  </div>
+
+  <div class="info-panel">
+    <div class="info-panel-title">📋 Info & Buren</div>
+    <div class="info-content" id="infoContent">
+      <div class="info-empty">Klik op een geplaatst gewas voor info en goede buren.</div>
+    </div>
+  </div>
+</div>
+
+<div id="notifications"></div>
+<div class="ctx-menu" id="ctxMenu"></div>
+
+<script>
+// spacing = [cols, rows] in 10cm units
+const CROPS = [
+  {id:'tomaat',name:'Tomaat',emoji:'🍅',cat:'Vruchtgroenten',color:'#c94e2a',spacing:[6,6],
+   good:['basilicum','wortel','peterselie','afrikaantje','knoflook'],bad:['kool','aardappel','venkel','biet'],
+   tip:'Zonnige plek, staken nodig. Gevoelig voor Phytophthora.'},
+  {id:'paprika',name:'Paprika',emoji:'🫑',cat:'Vruchtgroenten',color:'#d97c20',spacing:[5,5],
+   good:['basilicum','wortel','spinazie'],bad:['venkel','kool'],
+   tip:'Warmteminnend. Plant na 15 mei buiten.'},
+  {id:'komkommer',name:'Komkommer',emoji:'🥒',cat:'Vruchtgroenten',color:'#3a8e2e',spacing:[5,5],
+   good:['bonen','dille','sla','afrikaantje'],bad:['aardappel','venkel'],
+   tip:'Vochtige bodem. Klimmer – geef steunen.'},
+  {id:'courgette',name:'Courgette',emoji:'🥬',cat:'Vruchtgroenten',color:'#5aaa2a',spacing:[8,8],
+   good:['nasturtium','mais','bonen'],bad:['tomaat','aardappel'],
+   tip:'Neemt veel ruimte in. Nasturtium lokt bladluizen weg.'},
+  {id:'pompoen',name:'Pompoen',emoji:'🎃',cat:'Vruchtgroenten',color:'#d06520',spacing:[10,10],
+   good:['mais','bonen','nasturtium'],bad:['aardappel'],
+   tip:'"Three Sisters" met maïs en bonen.'},
+  {id:'aubergine',name:'Aubergine',emoji:'🍆',cat:'Vruchtgroenten',color:'#6e2e8a',spacing:[6,6],
+   good:['basilicum','peterselie'],bad:['venkel'],
+   tip:'Veel warmte nodig. Ideaal in kas.'},
+  {id:'mais',name:'Maïs',emoji:'🌽',cat:'Vruchtgroenten',color:'#d4a820',spacing:[4,4],
+   good:['pompoen','bonen','courgette'],bad:['tomaat'],
+   tip:'Zet aan de noordkant, schaduwt andere planten.'},
+  {id:'broccoli',name:'Broccoli',emoji:'🥦',cat:'Koolsoorten',color:'#1e6e28',spacing:[5,5],
+   good:['dille','sla','ui','kamille'],bad:['tomaat','venkel','bonen'],
+   tip:'Dek af met insectengaas na het planten.'},
+  {id:'bloemkool',name:'Bloemkool',emoji:'🌸',cat:'Koolsoorten',color:'#c8c89a',spacing:[6,6],
+   good:['dille','sla','ui'],bad:['tomaat','venkel'],
+   tip:'Bekalken vóór het planten.'},
+  {id:'spruitjes',name:'Spruitjes',emoji:'🟢',cat:'Koolsoorten',color:'#2a6a2a',spacing:[6,6],
+   good:['dille','sla','ui'],bad:['tomaat','venkel'],
+   tip:'Oogst na eerste nachtvorst voor beste smaak.'},
+  {id:'boerenkool',name:'Boerenkool',emoji:'🌿',cat:'Koolsoorten',color:'#145214',spacing:[5,5],
+   good:['dille','sla'],bad:['tomaat','venkel'],
+   tip:'Winterhard, smaak verbetert na vorst.'},
+  {id:'koolraap',name:'Koolraap',emoji:'🟣',cat:'Koolsoorten',color:'#5a146e',spacing:[4,4],
+   good:['dille','sla'],bad:['tomaat','venkel'],
+   tip:'Goede vruchtwisseling voorkomt ziektes.'},
+  {id:'wortel',name:'Wortel',emoji:'🥕',cat:'Wortelgroenten',color:'#e06010',spacing:[1,1],
+   good:['ui','prei','sla','rozemarijn'],bad:['dille','venkel'],
+   tip:'Zaaiafstand 10×10 cm. Geen verse compost.'},
+  {id:'ui',name:'Ui',emoji:'🧅',cat:'Wortelgroenten',color:'#b87810',spacing:[2,2],
+   good:['wortel','tomaat','broccoli','aardbei'],bad:['bonen','erwten'],
+   tip:'Houdt wortelvlieg weg bij wortelen.'},
+  {id:'knoflook',name:'Knoflook',emoji:'🧄',cat:'Wortelgroenten',color:'#9a8840',spacing:[2,2],
+   good:['tomaat','aardbei'],bad:['erwten','bonen'],
+   tip:'Plant in herfst voor zomeroogst.'},
+  {id:'prei',name:'Prei',emoji:'🥬',cat:'Wortelgroenten',color:'#3a8a3a',spacing:[2,2],
+   good:['wortel','tomaat'],bad:['bonen','erwten'],
+   tip:'Houdt wortelvlieg weg.'},
+  {id:'biet',name:'Biet',emoji:'🔴',cat:'Wortelgroenten',color:'#a02020',spacing:[2,2],
+   good:['sla','bonen'],bad:['wortel','spinazie'],
+   tip:'Goede voorvrucht voor kool.'},
+  {id:'pastinaak',name:'Pastinaak',emoji:'⬜',cat:'Wortelgroenten',color:'#c8b880',spacing:[2,2],
+   good:['ui','prei','rozemarijn'],bad:['dille','venkel'],
+   tip:'Oogsten na eerste vorst voor de zoetste smaak.'},
+  {id:'aardappel',name:'Aardappel',emoji:'🥔',cat:'Wortelgroenten',color:'#7a5a28',spacing:[4,4],
+   good:['mais','bonen'],bad:['tomaat','courgette','komkommer','pompoen'],
+   tip:'Houd ver van tomaten – beide vatbaar voor Phytophthora.'},
+  {id:'sla',name:'Sla',emoji:'🥗',cat:'Bladgroenten',color:'#58a848',spacing:[3,3],
+   good:['radijs','wortel','aardbei','ui','komkommer'],bad:['venkel'],
+   tip:'Radijs groeit snel en markeert de rij.'},
+  {id:'spinazie',name:'Spinazie',emoji:'🌿',cat:'Bladgroenten',color:'#2e7a2e',spacing:[2,2],
+   good:['aardbei','prei','bonen'],bad:['biet'],
+   tip:'Zaai in voor- en najaar, gaat snel in zaad bij hitte.'},
+  {id:'snijbiet',name:'Snijbiet',emoji:'🌱',cat:'Bladgroenten',color:'#c02828',spacing:[3,3],
+   good:['bonen','erwten','ui'],bad:['wortel'],
+   tip:'Oogst buitenste bladeren voor continue productie.'},
+  {id:'rucola',name:'Rucola',emoji:'🌿',cat:'Bladgroenten',color:'#4e7a20',spacing:[2,2],
+   good:['sla','radijs'],bad:['venkel'],
+   tip:'Snel groeiend, goed bodembedekker.'},
+  {id:'bonen',name:'Bonen',emoji:'🫘',cat:'Peulvruchten',color:'#6a4228',spacing:[3,3],
+   good:['komkommer','courgette','wortel','sla','mais'],bad:['ui','knoflook','venkel'],
+   tip:'Fixeren stikstof in de bodem.'},
+  {id:'erwten',name:'Erwten',emoji:'🟩',cat:'Peulvruchten',color:'#5a8a28',spacing:[2,2],
+   good:['wortel','radijs','sla','spinazie'],bad:['ui','knoflook','venkel'],
+   tip:'Klimmer – geef steunen. Stikstoffixeerder.'},
+  {id:'basilicum',name:'Basilicum',emoji:'🌿',cat:'Kruiden',color:'#1a6a1a',spacing:[3,3],
+   good:['tomaat','paprika','aubergine'],bad:['salie','tijm'],
+   tip:'Houdt bladluizen weg bij tomaten en verbetert de smaak.'},
+  {id:'peterselie',name:'Peterselie',emoji:'🌿',cat:'Kruiden',color:'#2a8a20',spacing:[2,2],
+   good:['tomaat','wortel'],bad:['sla'],
+   tip:'Trekt zweefvliegen aan die bladluis bestrijden.'},
+  {id:'dille',name:'Dille',emoji:'🌿',cat:'Kruiden',color:'#5a8a1a',spacing:[3,3],
+   good:['komkommer','sla','ui'],bad:['wortel','venkel','tomaat'],
+   tip:'Trekt sluipwespen aan. Remt groei van wortels.'},
+  {id:'venkel',name:'Venkel',emoji:'🌿',cat:'Kruiden',color:'#8aaa4a',spacing:[4,4],
+   good:[],bad:['tomaat','kool','aardappel','bonen','erwten','sla','wortel','komkommer','ui'],
+   tip:'Plant apart! Stoot vrijwel alle gewassen af.'},
+  {id:'rozemarijn',name:'Rozemarijn',emoji:'🌿',cat:'Kruiden',color:'#4a6a6a',spacing:[4,4],
+   good:['bonen','wortel'],bad:[],
+   tip:'Droogteresistent. Houdt koolvlinder weg.'},
+  {id:'tijm',name:'Tijm',emoji:'🌿',cat:'Kruiden',color:'#6a8a2a',spacing:[3,3],
+   good:['kool','wortel','bonen'],bad:['basilicum'],
+   tip:'Trekt bestuivers aan. Goed voor de smaak van buurplanten.'},
+  {id:'salie',name:'Salie',emoji:'🌿',cat:'Kruiden',color:'#7a9a48',spacing:[4,4],
+   good:['kool','wortel','tomaat'],bad:['ui','komkommer'],
+   tip:'Houdt koolvlinder weg bij koolsoorten.'},
+  {id:'munt',name:'Munt',emoji:'🌿',cat:'Kruiden',color:'#1a8a7a',spacing:[3,3],
+   good:['tomaat','erwten','kool'],bad:[],
+   tip:'Plant in pot – invasief! Houdt mieren en slakken weg.'},
+  {id:'kamille',name:'Kamille',emoji:'🌸',cat:'Kruiden',color:'#c8b820',spacing:[2,2],
+   good:['ui','kool','komkommer'],bad:[],
+   tip:'Verbetert groei van buurgewassen, trekt bestuivers aan.'},
+  {id:'koriander',name:'Koriander',emoji:'🌿',cat:'Kruiden',color:'#8abe40',spacing:[2,2],
+   good:['sla','spinazie','wortel'],bad:['venkel'],
+   tip:'Houdt bladluis en spintmijt weg.'},
+  {id:'radijs',name:'Radijs',emoji:'🔴',cat:'Overig',color:'#c82828',spacing:[1,1],
+   good:['sla','wortel','komkommer','erwten'],bad:['venkel'],
+   tip:'Klaar in 3–4 weken! Markeert trage zaadrijen.'},
+  {id:'aardbei',name:'Aardbei',emoji:'🍓',cat:'Overig',color:'#c82020',spacing:[4,4],
+   good:['ui','knoflook','spinazie','sla','basilicum'],bad:['venkel'],
+   tip:'Ui en knoflook voorkomen schimmelziekten bij aardbeien.'},
+  {id:'afrikaantje',name:'Afrikaantje',emoji:'🌼',cat:'Overig',color:'#e08000',spacing:[2,2],
+   good:['tomaat','paprika','komkommer','courgette'],bad:[],
+   tip:'Lokplant voor bladluis. Houdt wortelaaltjes weg.'},
+  {id:'nasturtium',name:'Nasturtium',emoji:'🌺',cat:'Overig',color:'#d04010',spacing:[3,3],
+   good:['courgette','pompoen','komkommer','tomaat'],bad:[],
+   tip:'Lokt bladluizen weg als lokplant. Eetbare bloemen.'},
+  {id:'asperge',name:'Asperge',emoji:'🌱',cat:'Overig',color:'#78b878',spacing:[4,4],
+   good:['tomaat','peterselie','basilicum'],bad:['ui','knoflook'],
+   tip:'Meerjarig gewas. Tomaten en asperges beschermen elkaar.'},
+  {id:'zoete_aardappel',name:'Zoete aardappel',emoji:'🍠',cat:'Overig',color:'#c05a10',spacing:[5,5],
+   good:['bonen','spinazie'],bad:['pompoen'],
+   tip:'Goede bodembedekker. Plant na laatste nachtvorst.'},
+];
+
+const CROP_MAP={};
+CROPS.forEach(c=>CROP_MAP[c.id]=c);
+
+let CELL_PX=24;
+let GARDEN_COLS=40; // 4m
+let GARDEN_ROWS=30; // 3m
+let placedCrops=[];
+let uidCounter=1;
+let dragCropId=null;
+let selectedUid=null;
+
+function init(){renderCropList();renderTileList();buildGrid();}
+
+function redrawAll(){redrawTiles();redrawPlaced();}
+
+const CAT_EMOJI={'Vruchtgroenten':'🍅','Koolsoorten':'🥦','Wortelgroenten':'🥕','Bladgroenten':'🥬','Peulvruchten':'🫘','Kruiden':'🌿','Overig':'🌱'};
+let _openCats = Object.keys(CAT_EMOJI); // all open by default
+
+function makeCropEl(crop){
+  const el=document.createElement('div');
+  el.className='crop-item';
+  el.draggable=true;
+  const[cw,ch]=crop.spacing;
+  el.innerHTML=`<span class="ci-emoji">${crop.emoji}</span><span class="ci-info"><span class="ci-name">${crop.name}</span><span class="ci-size">${cw*10}×${ch*10} cm</span></span>`;
+  el.title=crop.tip;
+  el.addEventListener('dragstart',e=>{dragCropId=crop.id;e.dataTransfer.effectAllowed='copy';});
+  el.addEventListener('dragend',()=>{dragCropId=null;clearHL();});
+  return el;
+}
+
+function renderCropList(filter=''){
+  const list=document.getElementById('cropList');
+  list.innerHTML='';
+  const fl=filter.toLowerCase();
+  const filtered=CROPS.filter(c=>!fl||c.name.toLowerCase().includes(fl)||c.cat.toLowerCase().includes(fl));
+
+  // If searching, show flat list
+  if(fl){
+    filtered.forEach(crop=>list.appendChild(makeCropEl(crop)));
+    return;
+  }
+
+  // Group by category
+  const groups={};
+  filtered.forEach(c=>{
+    if(!groups[c.cat]) groups[c.cat]=[];
+    groups[c.cat].push(c);
+  });
+
+  Object.entries(groups).forEach(([cat, crops])=>{
+    const isOpen = _openCats.includes(cat);
+    // Category header
+    const header=document.createElement('div');
+    header.className='cat-group-header';
+    header.innerHTML=`<span>${CAT_EMOJI[cat]||'🌱'} ${cat}</span><span class="cat-arrow">${isOpen?'▲':'▼'}</span>`;
+    header.onclick=()=>{
+      const body=header.nextSibling;
+      const arrow=header.querySelector('.cat-arrow');
+      const open=body.style.display!=='none';
+      body.style.display=open?'none':'flex';
+      arrow.textContent=open?'▼':'▲';
+      if(open) _openCats=_openCats.filter(c=>c!==cat);
+      else _openCats.push(cat);
+    };
+    list.appendChild(header);
+
+    // Category body
+    const body=document.createElement('div');
+    body.className='cat-group-body';
+    body.style.display=isOpen?'flex':'none';
+    crops.forEach(crop=>body.appendChild(makeCropEl(crop)));
+    list.appendChild(body);
+  });
+}
+function filterCrops(){renderCropList(document.getElementById('cropSearch').value);}
+
+function buildGrid(){
+  const grid=document.getElementById('garden-grid');
+  const wrap=document.getElementById('gardenWrap');
+  const rx=document.getElementById('rulerX');
+  const ry=document.getElementById('rulerY');
+  grid.innerHTML='';
+  grid.style.setProperty('--cell',CELL_PX+'px');
+  const gw=GARDEN_COLS*CELL_PX,gh=GARDEN_ROWS*CELL_PX;
+  grid.style.width=gw+'px';grid.style.height=gh+'px';
+  wrap.style.width=(gw+34)+'px';wrap.style.height=(gh+34)+'px';
+
+  // Rulers
+  rx.style.width=gw+'px';rx.innerHTML='';
+  for(let c=0;c<=GARDEN_COLS;c++){
+    const l=document.createElement('div');l.className='rlbl';
+    l.style.width=CELL_PX+'px';l.style.height='34px';
+    if(c%10===0){l.textContent=(c/10*100)+'';l.style.borderLeft='1.5px solid var(--border)';l.style.fontWeight='800';}
+    rx.appendChild(l);
+  }
+  ry.style.height=gh+'px';ry.innerHTML='';
+  for(let r=0;r<=GARDEN_ROWS;r++){
+    const l=document.createElement('div');l.className='rlbl';
+    l.style.height=CELL_PX+'px';l.style.width='34px';
+    if(r%10===0){l.textContent=(r/10*100)+'';l.style.borderTop='1.5px solid var(--border)';l.style.fontWeight='800';}
+    ry.appendChild(l);
+  }
+
+  // Meter-line canvas
+  const cv=document.createElement('canvas');
+  cv.style.cssText='position:absolute;top:0;left:0;pointer-events:none;z-index:1;';
+  cv.width=gw;cv.height=gh;
+  const ctx=cv.getContext('2d');
+  ctx.strokeStyle='rgba(80,55,20,0.38)';ctx.lineWidth=1;
+  for(let c=0;c<=GARDEN_COLS;c+=10){ctx.beginPath();ctx.moveTo(c*CELL_PX,0);ctx.lineTo(c*CELL_PX,gh);ctx.stroke();}
+  for(let r=0;r<=GARDEN_ROWS;r+=10){ctx.beginPath();ctx.moveTo(0,r*CELL_PX);ctx.lineTo(gw,r*CELL_PX);ctx.stroke();}
+  grid.appendChild(cv);
+
+  // Cells
+  for(let row=0;row<GARDEN_ROWS;row++){
+    for(let col=0;col<GARDEN_COLS;col++){
+      const cell=document.createElement('div');
+      cell.className='grid-cell';
+      cell.style.left=(col*CELL_PX)+'px';cell.style.top=(row*CELL_PX)+'px';
+      cell.style.width=CELL_PX+'px';cell.style.height=CELL_PX+'px';
+      cell.dataset.col=col;cell.dataset.row=row;
+      cell.addEventListener('dragover',e=>{e.preventDefault();if(dragCropId)hlDrop(col,row,dragCropId);else if(dragTileId)hlTileDrop(col,row,dragTileId);});
+      cell.addEventListener('drop',e=>{e.preventDefault();clearHL();if(dragCropId)placeCrop(dragCropId,col,row);else if(dragTileId)placeTile(dragTileId,col,row);});
+      grid.appendChild(cell);
+    }
+  }
+  redrawTiles();
+  redrawPlaced();
+}
+
+function hlDrop(col,row,cropId){
+  clearHL();
+  const crop=CROP_MAP[cropId];if(!crop)return;
+  const[cw,ch]=crop.spacing;
+  const ok=canFit(col,row,cw,ch,null);
+  for(let dr=0;dr<ch;dr++)for(let dc=0;dc<cw;dc++){
+    const c2=col+dc,r2=row+dr;
+    if(c2>=GARDEN_COLS||r2>=GARDEN_ROWS)continue;
+    const el=document.querySelector(`#garden-grid .grid-cell[data-col="${c2}"][data-row="${r2}"]`);
+    if(el)el.classList.add(ok?'drag-over':'drop-blocked');
+  }
+}
+function clearHL(){document.querySelectorAll('.drag-over,.drop-blocked').forEach(el=>{el.classList.remove('drag-over','drop-blocked');});}
+
+function canFit(col,row,cw,ch,ignoreUid){
+  if(col+cw>GARDEN_COLS||row+ch>GARDEN_ROWS)return false;
+  for(const p of placedCrops){
+    if(p.uid===ignoreUid)continue;
+    const[pcw,pch]=CROP_MAP[p.cropId].spacing;
+    if(col<p.col+pcw&&col+cw>p.col&&row<p.row+pch&&row+ch>p.row)return false;
+  }
+  return true;
+}
+
+function placeCrop(cropId,col,row){
+  const crop=CROP_MAP[cropId];if(!crop)return;
+  const[cw,ch]=crop.spacing;
+  if(!canFit(col,row,cw,ch,null)){showNotif('⚠️ Hier past geen '+crop.name+' – de ruimte is bezet.','warn');return;}
+  const uid=uidCounter++;
+  placedCrops.push({cropId,col,row,uid});
+  redrawPlaced();checkNeighborsAll();showPlacedInfo(uid);
+}
+
+function removeCrop(uid){
+  placedCrops=placedCrops.filter(p=>p.uid!==uid);
+  redrawPlaced();checkNeighborsAll();
+  if(selectedUid===uid){selectedUid=null;document.getElementById('infoContent').innerHTML='<div class="info-empty">Klik op een geplaatst gewas voor info en goede buren.</div>';}
+}
+
+function redrawPlaced(){
+  document.querySelectorAll('#garden-grid .placed-crop').forEach(el=>el.remove());
+  placedCrops.forEach(p=>{
+    const crop=CROP_MAP[p.cropId];if(!crop)return;
+    const[cw,ch]=crop.spacing;
+    const pw=cw*CELL_PX,ph=ch*CELL_PX;
+    const el=document.createElement('div');
+    el.className='placed-crop';
+    el.style.left=(p.col*CELL_PX)+'px';el.style.top=(p.row*CELL_PX)+'px';
+    el.style.width=pw+'px';el.style.height=ph+'px';
+    el.style.background=crop.color;el.style.color=isLight(crop.color)?'#222':'#fff';
+    const fs=Math.max(8,Math.min(15,pw*0.13));
+    el.style.fontSize=fs+'px';el.style.zIndex=2;
+    el.dataset.uid=p.uid;
+    el.innerHTML=`<span class="crop-del" onclick="removeCrop(${p.uid});event.stopPropagation()">✕</span>
+      <span style="font-size:${Math.max(10,Math.min(pw*0.22,28))}px">${crop.emoji}</span>
+      <span style="max-width:${pw-4}px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${crop.name}</span>`;
+    el.addEventListener('click',()=>showPlacedInfo(p.uid));
+    el.addEventListener('contextmenu',e=>showCtxMenu(e,p.uid));
+    document.getElementById('garden-grid').appendChild(el);
+  });
+}
+
+function areTouching(a,b){
+  const ca=CROP_MAP[a.cropId],cb=CROP_MAP[b.cropId];
+  const[aw,ah]=ca.spacing,[bw,bh]=cb.spacing;
+  return(a.col-1<b.col+bw&&a.col+aw+1>b.col&&a.row-1<b.row+bh&&a.row+ah+1>b.row);
+}
+
+function checkNeighborsAll(){
+  document.querySelectorAll('.placed-crop').forEach(el=>el.classList.remove('warn-border'));
+  placedCrops.forEach(p=>{
+    const crop=CROP_MAP[p.cropId];
+    placedCrops.forEach(nb=>{
+      if(nb.uid===p.uid||!areTouching(p,nb))return;
+      const nbCrop=CROP_MAP[nb.cropId];
+      if(crop.bad.includes(nb.cropId)||nbCrop.bad.includes(p.cropId)){
+        const e1=document.querySelector(`.placed-crop[data-uid="${p.uid}"]`);
+        const e2=document.querySelector(`.placed-crop[data-uid="${nb.uid}"]`);
+        if(e1)e1.classList.add('warn-border');if(e2)e2.classList.add('warn-border');
+      }
+    });
+  });
+}
+
+function getTouching(p){return placedCrops.filter(nb=>nb.uid!==p.uid&&areTouching(p,nb));}
+
+function showPlacedInfo(uid){
+  selectedUid=uid;
+  const placed=placedCrops.find(p=>p.uid===uid);if(!placed)return;
+  const crop=CROP_MAP[placed.cropId];if(!crop)return;
+  const[cw,ch]=crop.spacing;
+  const neighbors=getTouching(placed);
+  const badN=neighbors.filter(n=>crop.bad.includes(n.cropId));
+  const goodN=neighbors.filter(n=>crop.good.includes(n.cropId));
+
+  let html=`<div class="info-crop-name">${crop.emoji} ${crop.name}</div>
+    <div style="font-size:0.73rem;color:var(--text2);margin-bottom:4px">${crop.cat}</div>
+    <div class="info-spacing">📐 ${cw*10}×${ch*10} cm per plant</div>
+    <div style="font-size:0.8rem;line-height:1.5;color:var(--text);margin-top:5px">${crop.tip}</div>`;
+
+  if(badN.length){
+    html+=`<div class="info-section"><div class="info-section-title">⚠️ Slechte buren naast dit gewas</div>`;
+    badN.forEach(n=>{const nc=CROP_MAP[n.cropId];html+=`<span class="info-tag tag-bad">${nc.emoji} ${nc.name}</span>`;});
+    html+='</div>';
+    badN.forEach(n=>{const nc=CROP_MAP[n.cropId];showNotif(`⚠️ ${crop.name} en ${nc.name} horen niet naast elkaar!`,'warn');});
+  }
+  if(goodN.length){
+    html+=`<div class="info-section"><div class="info-section-title">✅ Goede buren naast dit gewas</div>`;
+    goodN.forEach(n=>{const nc=CROP_MAP[n.cropId];html+=`<span class="info-tag tag-good">${nc.emoji} ${nc.name}</span>`;});
+    html+='</div>';
+  }
+  if(crop.good.length){
+    html+=`<div class="info-section"><div class="info-section-title">💚 Plant dit naast ${crop.name}</div>`;
+    crop.good.forEach(gId=>{const gc=CROP_MAP[gId];if(gc)html+=`<span class="info-tag tag-good">${gc.emoji} ${gc.name}</span>`;});
+    html+='</div>';
+  }
+  if(crop.bad.length){
+    html+=`<div class="info-section"><div class="info-section-title">❌ Niet naast ${crop.name}</div>`;
+    crop.bad.forEach(bId=>{const bc=CROP_MAP[bId];if(bc)html+=`<span class="info-tag tag-bad">${bc.emoji} ${bc.name}</span>`;});
+    html+='</div>';
+  }
+  document.getElementById('infoContent').innerHTML=html;
+}
+
+const notifTimers={};
+function showNotif(msg,type='info'){
+  if(notifTimers[msg])return;
+  const wrap=document.getElementById('notifications');
+  const el=document.createElement('div');
+  el.className=`notif notif-${type}`;
+  el.innerHTML=`<span>${type==='warn'?'⚠️':'ℹ️'}</span><span>${msg}</span>`;
+  el.onclick=()=>{el.remove();delete notifTimers[msg];};
+  wrap.appendChild(el);
+  notifTimers[msg]=setTimeout(()=>{el.remove();delete notifTimers[msg];},4500);
+}
+
+function showCtxMenu(e,uid){
+  e.preventDefault();
+  const menu=document.getElementById('ctxMenu');
+  menu.style.display='block';menu.style.left=e.clientX+'px';menu.style.top=e.clientY+'px';
+  menu.innerHTML=`<div class="ctx-item" onclick="showPlacedInfo(${uid});closeCtx()">📋 Info & buren</div>
+    <div class="ctx-sep"></div>
+    <div class="ctx-item danger" onclick="removeCrop(${uid});closeCtx()">🗑️ Verwijderen</div>`;
+  setTimeout(()=>document.addEventListener('click',closeCtx,{once:true}),50);
+}
+function closeCtx(){document.getElementById('ctxMenu').style.display='none';}
+
+function applySize(){
+  const wcm=Math.max(10,Math.min(2000,parseInt(document.getElementById('gardenW').value)||400));
+  const hcm=Math.max(10,Math.min(2000,parseInt(document.getElementById('gardenH').value)||300));
+  CELL_PX=Math.max(10,Math.min(60,parseInt(document.getElementById('zoomPx').value)||24));
+  GARDEN_COLS=Math.round(wcm/10);GARDEN_ROWS=Math.round(hcm/10);
+  document.getElementById('gardenW').value=wcm;document.getElementById('gardenH').value=hcm;
+  placedCrops=placedCrops.filter(p=>{const[cw,ch]=CROP_MAP[p.cropId].spacing;return p.col+cw<=GARDEN_COLS&&p.row+ch<=GARDEN_ROWS;});
+  buildGrid();
+}
+
+function clearGarden(){
+  if(!confirm('Tuin leegmaken?'))return;
+  placedCrops=[];placedTiles=[];redrawTiles();redrawPlaced();
+  document.getElementById('infoContent').innerHTML='<div class="info-empty">Klik op een geplaatst gewas voor info en goede buren.</div>';
+}
+
+function isLight(hex){
+  const c=hex.replace('#','');
+  return(0.299*parseInt(c.substr(0,2),16)+0.587*parseInt(c.substr(2,2),16)+0.114*parseInt(c.substr(4,2),16))>155;
+}
+
+// ============================================================
+// PATH / TILE SYSTEM
+// ============================================================
+const DEFAULT_TILES = [
+  {id:'stoep60',name:'Stoeptegel 60×60',w:6,h:6,color:'#b0a080'},
+  {id:'tegel30',name:'Tegel 30×30',w:3,h:3,color:'#b8a888'},
+  {id:'tegel2060',name:'Tegel 20×60',w:2,h:6,color:'#c8b090'},
+  {id:'tegel6020',name:'Tegel 60×20',w:6,h:2,color:'#c8b090'},
+  {id:'klinker1020',name:'Klinker 10×20',w:1,h:2,color:'#c09878'},
+  {id:'klinker2010',name:'Klinker 20×10',w:2,h:1,color:'#c09878'},
+  {id:'klinker2020',name:'Klinker 20×20',w:2,h:2,color:'#c0a070'},
+  {id:'tegel4040',name:'Tegel 40×40',w:4,h:4,color:'#a09070'},
+  {id:'grind',name:'Grind (10×10)',w:1,h:1,color:'#c8c0a8'},
+];
+
+let customTiles = [...DEFAULT_TILES];
+let placedTiles = []; // {tileId, col, row, uid, color, w, h, name}
+let dragTileId = null;
+
+function renderTileList() {
+  const list = document.getElementById('tileList');
+  list.innerHTML = '';
+  customTiles.forEach(tile => {
+    const el = document.createElement('div');
+    el.className = 'tile-item';
+    el.draggable = true;
+    el.innerHTML = `
+      <span class="tile-swatch" style="background:${tile.color}"></span>
+      <span class="tile-info">
+        <span class="tile-name">${tile.name}</span>
+        <span class="tile-dim">${tile.w*10}×${tile.h*10} cm</span>
+      </span>`;
+    el.addEventListener('dragstart', e => { dragTileId = tile.id; dragCropId = null; e.dataTransfer.effectAllowed = 'copy'; });
+    el.addEventListener('dragend', () => { dragTileId = null; clearHL(); });
+    list.appendChild(el);
+  });
+}
+
+function applyPreset(wcm, hcm, color, name) {
+  document.getElementById('tileW').value = wcm;
+  document.getElementById('tileH').value = hcm;
+  document.getElementById('tileColor').value = color;
+  document.getElementById('tileName').value = name;
+}
+
+function addCustomTile() {
+  const wcm = parseInt(document.getElementById('tileW').value) || 30;
+  const hcm = parseInt(document.getElementById('tileH').value) || 30;
+  const color = document.getElementById('tileColor').value;
+  const name = document.getElementById('tileName').value.trim() || `Tegel ${wcm}×${hcm}`;
+  const w = Math.round(wcm / 10);
+  const h = Math.round(hcm / 10);
+  const id = 'custom_' + Date.now();
+  customTiles.unshift({id, name, w, h, color});
+  renderTileList();
+}
+
+function placeTile(tileId, col, row) {
+  const tile = customTiles.find(t => t.id === tileId);
+  if (!tile) return;
+  if (col + tile.w > GARDEN_COLS || row + tile.h > GARDEN_ROWS) return;
+  const uid = uidCounter++;
+  placedTiles.push({tileId, col, row, uid, color: tile.color, w: tile.w, h: tile.h, name: tile.name});
+  redrawTiles();
+}
+
+function removeTile(uid) {
+  placedTiles = placedTiles.filter(t => t.uid !== uid);
+  redrawTiles();
+}
+
+function redrawTiles() {
+  document.querySelectorAll('#garden-grid .placed-tile').forEach(el => el.remove());
+  placedTiles.forEach(t => {
+    const pw = t.w * CELL_PX, ph = t.h * CELL_PX;
+    const el = document.createElement('div');
+    el.className = 'placed-tile';
+    el.style.left = (t.col * CELL_PX) + 'px';
+    el.style.top = (t.row * CELL_PX) + 'px';
+    el.style.width = pw + 'px';
+    el.style.height = ph + 'px';
+    el.style.background = t.color;
+    el.dataset.uid = t.uid;
+    // Tile joint lines drawn via box-shadow pattern
+    el.style.boxShadow = 'inset 0 0 0 1px rgba(255,255,255,0.4), inset 1px 1px 0 rgba(255,255,255,0.25)';
+    // Label if big enough
+    if (pw >= 30 && ph >= 20) {
+      el.innerHTML = `<span class="tile-del" onclick="removeTile(${t.uid});event.stopPropagation()">✕</span>
+        <span style="position:absolute;bottom:2px;left:2px;font-size:${Math.max(7,Math.min(10,pw*0.1))}px;color:rgba(0,0,0,0.4);font-weight:700;pointer-events:none">${t.name}</span>`;
+    } else {
+      el.innerHTML = `<span class="tile-del" onclick="removeTile(${t.uid});event.stopPropagation()">✕</span>`;
+    }
+    document.getElementById('garden-grid').appendChild(el);
+  });
+}
+
+function hlTileDrop(col, row, tileId) {
+  clearHL();
+  const tile = customTiles.find(t => t.id === tileId);
+  if (!tile) return;
+  for (let dr = 0; dr < tile.h; dr++) for (let dc = 0; dc < tile.w; dc++) {
+    const c2 = col+dc, r2 = row+dr;
+    if (c2 >= GARDEN_COLS || r2 >= GARDEN_ROWS) continue;
+    const el = document.querySelector(`#garden-grid .grid-cell[data-col="${c2}"][data-row="${r2}"]`);
+    if (el) el.classList.add('drag-over');
+  }
+}
+
+function switchTab(tab) {
+  document.querySelectorAll('.stab').forEach((b,i) => b.classList.toggle('active', (tab==='crops'&&i===0)||(tab==='paths'&&i===1)));
+  document.getElementById('tab-crops').classList.toggle('active', tab==='crops');
+  document.getElementById('tab-paths').classList.toggle('active', tab==='paths');
+}
+
+document.addEventListener('dragover',e=>e.preventDefault());
+document.addEventListener('dragend',()=>clearHL());
+init();
+</script>
+</body>
+</html>
