@@ -38,7 +38,7 @@
   .search-box input{width:100%;padding:4px 8px;border:1.5px solid var(--border);border-radius:7px;font-family:'Nunito',sans-serif;font-size:0.8rem;background:var(--bg);color:var(--text);}
   .search-box input:focus{outline:none;border-color:var(--accent);}
   .crop-list{overflow-y:auto;flex:1;padding:5px;display:flex;flex-direction:column;gap:3px;}
-  .crop-item{display:flex;align-items:center;gap:6px;padding:5px 8px;border-radius:7px;cursor:grab;user-select:none;font-size:0.79rem;font-weight:600;border:1.5px solid transparent;transition:all 0.12s;background:var(--surface2);}
+  .crop-item{display:flex;align-items:center;gap:6px;padding:5px 8px;border-radius:7px;cursor:grab;user-select:none;-webkit-user-select:none;-webkit-user-drag:none;touch-action:none;font-size:0.79rem;font-weight:600;border:1.5px solid transparent;transition:all 0.12s;background:var(--surface2);}
   .crop-item:hover{border-color:var(--accent);background:var(--good-bg);}
   .crop-item:active{cursor:grabbing;}
   .ci-emoji{font-size:1.05rem;}
@@ -375,7 +375,7 @@ function init(){renderCropList();renderTileList();buildGrid();}
 function redrawAll(){redrawTiles();redrawPlaced();}
 
 const CAT_EMOJI={'Vruchtgroenten':'🍅','Koolsoorten':'🥦','Wortelgroenten':'🥕','Bladgroenten':'🥬','Peulvruchten':'🫘','Kruiden':'🌿','Overig':'🌱'};
-let _openCats = Object.keys(CAT_EMOJI); // all open by default
+let _openCats = []; // all collapsed by default
 
 function makeCropEl(crop){
   const el=document.createElement('div');
@@ -689,6 +689,7 @@ function renderTileList() {
         <span class="tile-name">${tile.name}</span>
         <span class="tile-dim">${tile.w*10}×${tile.h*10} cm</span>
       </span>`;
+    el.dataset.tileId = tile.id;
     el.addEventListener('dragstart', e => { dragTileId = tile.id; dragCropId = null; e.dataTransfer.effectAllowed = 'copy'; });
     el.addEventListener('dragend', () => { dragTileId = null; clearHL(); });
     list.appendChild(el);
@@ -774,6 +775,110 @@ function switchTab(tab) {
 document.addEventListener('dragover',e=>e.preventDefault());
 document.addEventListener('dragend',()=>clearHL());
 init();
+
+// ── Touch drag support for iPad/iOS ────────────────────────
+let _touchDragId = null;
+let _touchDragType = null; // 'crop' or 'tile'
+let _touchClone = null;
+
+function _startTouchDrag(e, id, type) {
+  e.preventDefault();
+  _touchDragId = id;
+  _touchDragType = type;
+  if(type === 'crop') dragCropId = id;
+  else dragTileId = id;
+
+  // Create floating clone
+  const src = e.currentTarget;
+  const rect = src.getBoundingClientRect();
+  _touchClone = src.cloneNode(true);
+  _touchClone.style.cssText = `
+    position:fixed;pointer-events:none;z-index:9999;opacity:0.85;
+    width:${rect.width}px;left:${e.touches[0].clientX - rect.width/2}px;
+    top:${e.touches[0].clientY - rect.height/2}px;
+    border-radius:7px;box-shadow:0 8px 24px rgba(0,0,0,0.3);
+    transform:scale(1.08);transition:none;
+  `;
+  document.body.appendChild(_touchClone);
+}
+
+function _moveTouchDrag(e) {
+  if(!_touchDragId) return;
+  e.preventDefault();
+  const t = e.touches[0];
+
+  // Move clone
+  if(_touchClone){
+    _touchClone.style.left = (t.clientX - _touchClone.offsetWidth/2) + 'px';
+    _touchClone.style.top  = (t.clientY - _touchClone.offsetHeight/2) + 'px';
+  }
+
+  // Find cell under finger
+  _touchClone.style.display = 'none';
+  const el = document.elementFromPoint(t.clientX, t.clientY);
+  _touchClone.style.display = '';
+
+  clearHL();
+  if(el && el.classList.contains('grid-cell')){
+    const col = parseInt(el.dataset.col);
+    const row = parseInt(el.dataset.row);
+    if(!isNaN(col) && !isNaN(row)){
+      if(dragCropId) hlDrop(col, row, dragCropId);
+      else if(dragTileId) hlTileDrop(col, row, dragTileId);
+    }
+  }
+}
+
+function _endTouchDrag(e) {
+  if(!_touchDragId) return;
+
+  // Remove clone
+  if(_touchClone){ _touchClone.remove(); _touchClone = null; }
+
+  const t = e.changedTouches[0];
+
+  // Find drop target
+  const el = document.elementFromPoint(t.clientX, t.clientY);
+  if(el && el.classList.contains('grid-cell')){
+    const col = parseInt(el.dataset.col);
+    const row = parseInt(el.dataset.row);
+    if(!isNaN(col) && !isNaN(row)){
+      if(dragCropId) placeCrop(dragCropId, col, row);
+      else if(dragTileId) placeTile(dragTileId, col, row);
+    }
+  }
+
+  clearHL();
+  dragCropId = null;
+  dragTileId = null;
+  _touchDragId = null;
+  _touchDragType = null;
+}
+
+document.addEventListener('touchmove', _moveTouchDrag, {passive:false});
+document.addEventListener('touchend', _endTouchDrag);
+document.addEventListener('touchcancel', _endTouchDrag);
+
+// Patch makeCropEl to add touch events
+const _origMakeCropEl = makeCropEl;
+makeCropEl = function(crop){
+  const el = _origMakeCropEl(crop);
+  el.addEventListener('touchstart', e => _startTouchDrag(e, crop.id, 'crop'), {passive:false});
+  return el;
+};
+
+// Patch renderTileList to add touch to tiles
+const _origRenderTileList = renderTileList;
+renderTileList = function(){
+  _origRenderTileList();
+  document.querySelectorAll('.tile-item').forEach(el => {
+    const tileId = el.dataset.tileId;
+    if(tileId){
+      el.addEventListener('touchstart', e => _startTouchDrag(e, tileId, 'tile'), {passive:false});
+    }
+  });
+};
+
 </script>
 </body>
 </html>
