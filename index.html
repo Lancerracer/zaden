@@ -488,13 +488,14 @@ h1 {
 .filter-bar { display: flex; gap: 5px; margin-bottom: 12px; flex-wrap: wrap; align-items: center; }
 .filter-label { font-size: 10px; color: var(--ink-light); letter-spacing: .12em; text-transform: uppercase; margin-right: 4px; font-weight: 700; }
 .filter-pill {
-  background: var(--surface); border: 1px solid var(--border2);
+  background: rgba(0,0,0,0.35); border: 1.5px solid rgba(165,214,167,0.3);
   border-radius: 16px; padding: 7px 16px;
-  font-family: 'Outfit', sans-serif; font-size: 13px; font-weight: 600;
-  cursor: pointer; color: var(--ink-mid); transition: all .2s;
+  font-family: 'Outfit', sans-serif; font-size: 13px; font-weight: 700;
+  cursor: pointer; color: #a5d6a7; transition: all .2s;
+  backdrop-filter: blur(4px);
 }
-.filter-pill:hover { background: var(--surface2); }
-.filter-pill.active { background: var(--orange-pale); border-color: rgba(255,152,0,0.35); color: var(--orange); }
+.filter-pill:hover { background: rgba(165,214,167,0.15); color: #ffffff; }
+.filter-pill.active { background: rgba(255,152,0,0.25); border-color: rgba(255,152,0,0.6); color: #ffcc80; font-weight: 800; }
 
 /* ── Legend ── */
 .legend {
@@ -502,7 +503,7 @@ h1 {
   background: var(--surface); padding: 10px 16px; border-radius: var(--radius);
   border: 1px solid var(--border2); box-shadow: 0 2px 8px rgba(0,0,0,0.3);
 }
-.legend-item { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #a5d6a7; font-weight: 600; }
+.legend-item { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #c8e6c9; font-weight: 700; text-shadow: 0 1px 3px rgba(0,0,0,0.5); }
 .legend-dot { width: 26px; height: 14px; border-radius: 4px; flex-shrink: 0; }
 
 /* ── Table ── */
@@ -519,12 +520,13 @@ thead th {
   letter-spacing: .05em; text-transform: uppercase; color: #a5d6a7;
   border-bottom: 1px solid var(--border2); white-space: nowrap;
   position: sticky; top: 0; background: var(--surface2); z-index: 10;
+  vertical-align: bottom; line-height: 1;
 }
 thead th:first-child {
   text-align: left; padding-left: 16px; min-width: 200px; width: 200px;
   position: sticky; left: 0; z-index: 20; border-right: 1px solid var(--border2);
 }
-thead th.cur { color: var(--green-bright); font-weight: 700; }
+thead th.cur { color: #66bb6a; font-weight: 800; background: rgba(76,175,80,0.12); border-radius: 4px 4px 0 0; }
 
 tr.cat-row td {
   background: linear-gradient(90deg, rgba(76,175,80,0.18), rgba(76,175,80,0.05), transparent);
@@ -562,9 +564,9 @@ td.pname {
 tr:hover .del-btn { opacity: .4; }
 .del-btn:hover { opacity: 1 !important; }
 
-td.mcell { padding: 2px 2px; text-align: center; width: 38px; min-width: 38px; max-width: 38px; cursor: pointer; user-select: none; }
+td.mcell { padding: 2px 1px; text-align: center; width: 34px; min-width: 34px; max-width: 34px; cursor: pointer; user-select: none; }
 .ci {
-  width: 32px; height: 20px; border-radius: 5px;
+  width: 28px; height: 20px; border-radius: 5px;
   margin: 0 auto; transition: all .15s;
 }
 .ci.empty { background: transparent; }
@@ -1310,6 +1312,65 @@ td.cur-col .ci.empty { background: rgba(76,175,80,0.04); }
 
 [data-theme="moestuin"] .legend-item { color: #3a5a20 !important; font-weight: 700; }
 
+
+/* ── Side panel layout (PC) ─────────────────────────────── */
+@media (min-width: 900px) {
+  .planner-layout {
+    display: flex; gap: 20px; align-items: flex-start;
+  }
+  .planner-main { flex: 1; min-width: 0; }
+  .planner-side {
+    width: 300px; flex-shrink: 0;
+    position: sticky; top: 20px;
+  }
+  .side-info-card {
+    background: rgba(0,0,0,0.45);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(76,175,80,0.2);
+    border-radius: 16px; padding: 20px;
+    min-height: 200px;
+  }
+  .side-info-empty {
+    color: rgba(165,214,167,0.5); font-size: 13px;
+    text-align: center; padding: 30px 0;
+    line-height: 1.8;
+  }
+  .side-info-name {
+    font-family: 'Outfit', sans-serif; font-weight: 800;
+    font-size: 18px; color: #fff; margin-bottom: 4px;
+  }
+  .side-info-cat {
+    font-size: 11px; color: #a5d6a7; letter-spacing: .1em;
+    text-transform: uppercase; font-weight: 600; margin-bottom: 14px;
+  }
+  .side-info-cal {
+    display: flex; gap: 3px; flex-wrap: wrap; margin-bottom: 14px;
+  }
+  .side-info-month {
+    width: 24px; height: 24px; border-radius: 5px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 9px; font-weight: 700; font-family: 'DM Mono', monospace;
+    background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.3);
+  }
+  .side-info-month.s { background: var(--orange); color: #fff; }
+  .side-info-month.h { background: var(--green-mid); color: #fff; }
+  .side-info-month.p { background: var(--purple-mid); color: #fff; }
+  .side-info-tips {
+    font-size: 12px; color: #a5d6a7; line-height: 1.7;
+    border-top: 1px solid rgba(76,175,80,0.15); padding-top: 12px;
+  }
+  .side-info-tips h3 { color: #66bb6a; font-size: 13px; margin-bottom: 6px; }
+  .side-info-tips p, .side-info-tips li { color: #a5d6a7; font-size: 12px; }
+  /* Hide modal on PC when side panel is visible */
+  .has-side-panel #infoModal { display: none !important; }
+}
+
+/* ── Mobiel: alles normaal ──────────────────────────────── */
+@media (max-width: 899px) {
+  .planner-layout { display: block; }
+  .planner-side { display: none; }
+}
+
 </style>
       <link rel="icon" href="icon-512.png" type="image/png">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -1362,7 +1423,6 @@ td.cur-col .ci.empty { background: rgba(76,175,80,0.04); }
   <div class="toolbar">
     <input type="text" id="searchInput" placeholder="Zoek gewas..." oninput="renderView()">
     <button class="btn primary" onclick="showAddModal()">+ Toevoegen <span class="ai-badge">AI</span></button>
-    <button class="btn" id="aiSettingsBtn" onclick="showAISettings()">🤖 AI</button>
   </div>
 
   <!-- Top navigation -->
@@ -2622,6 +2682,28 @@ function showPlantInfo(id){
   const p = data.find(p=>p.id===id);
   if(!p) return;
   currentInfoId = id;
+  // Update side panel (PC)
+  const _mo3=['J','F','M','A','M','J','J','A','S','O','N','D'];
+  const sideContent = document.getElementById('sideInfoContent');
+  const sideEmpty = document.getElementById('sideInfoEmpty');
+  if(sideContent && window.innerWidth >= 900){
+    document.getElementById('sideInfoName').textContent = p.name;
+    document.getElementById('sideInfoCat').textContent = p.cat || '';
+    document.getElementById('sideInfoSow').innerHTML = _mo3.map((m,i)=>
+      `<div class="side-info-month ${(p.sow||[]).includes(i)?'s':''}">${m}</div>`).join('');
+    document.getElementById('sideInfoHarvest').innerHTML = _mo3.map((m,i)=>
+      `<div class="side-info-month ${(p.harvest||[]).includes(i)?'h':''}">${m}</div>`).join('');
+    const tipEl = document.getElementById('sideInfoTips');
+    if(PLANT_TIPS && PLANT_TIPS[p.name]){
+      tipEl.innerHTML = PLANT_TIPS[p.name];
+    } else {
+      tipEl.innerHTML = '<p>Tips worden geladen...</p>';
+      loadPlantTips(p);
+    }
+    sideEmpty.style.display = 'none';
+    sideContent.style.display = '';
+    return; // Don't show modal on PC
+  }
   document.getElementById('infoName').textContent = p.name;
   document.getElementById('infoCat').textContent = p.cat||'Overig';
   // Mini calendar
