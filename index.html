@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 <html lang="nl" data-theme="dark">
 <head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-R9LFKFL71Y"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-R9LFKFL71Y');
+</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Zaaiplan Moestuin</title>
@@ -513,7 +521,7 @@ thead th {
   position: sticky; top: 0; background: var(--surface2); z-index: 10;
 }
 thead th:first-child {
-  text-align: left; padding-left: 16px; min-width: 160px;
+  text-align: left; padding-left: 16px; min-width: 140px; max-width: 180px; width: 140px;
   position: sticky; left: 0; z-index: 20; border-right: 1px solid var(--border2);
 }
 thead th.cur { color: var(--green-bright); font-weight: 700; }
@@ -532,17 +540,19 @@ tr.plant-prune:hover td, tr.plant-harvest:hover td { background: var(--surface2)
 tr.plant-harvest { border-bottom: 1px solid rgba(30,46,30,0.8); }
 
 td.pname {
-  padding: 4px 10px 4px 16px; white-space: nowrap;
+  padding: 4px 6px 4px 12px; white-space: nowrap;
   position: sticky; left: 0; background: var(--surface);
   border-right: 1px solid var(--border2); z-index: 5;
   vertical-align: middle; transition: background .15s;
+  max-width: 180px;
 }
 .pname-wrap { display: flex; align-items: center; gap: 5px; }
 .pname-btn {
   background: none; border: none;
-  font-family: 'Outfit', sans-serif; font-size: 12px; font-weight: 500;
+  font-family: 'Outfit', sans-serif; font-size: 11px; font-weight: 500;
   color: var(--ink-mid); cursor: pointer; text-align: left;
-  padding: 3px 8px; border-radius: 6px; transition: all .15s;
+  padding: 3px 6px; border-radius: 6px; transition: all .15s;
+  overflow: hidden; text-overflow: ellipsis; max-width: 160px;
 }
 .pname-btn:hover { background: var(--green-glow); color: var(--green-bright); }
 .del-btn {
@@ -552,9 +562,9 @@ td.pname {
 tr:hover .del-btn { opacity: .4; }
 .del-btn:hover { opacity: 1 !important; }
 
-td.mcell { padding: 2px 3px; text-align: center; width: 36px; min-width: 36px; cursor: pointer; user-select: none; }
+td.mcell { padding: 2px 2px; text-align: center; width: 28px; min-width: 28px; max-width: 28px; cursor: pointer; user-select: none; }
 .ci {
-  width: 28px; height: 17px; border-radius: 4px;
+  width: 22px; height: 17px; border-radius: 4px;
   margin: 0 auto; transition: all .15s;
 }
 .ci.empty { background: transparent; }
@@ -1148,6 +1158,131 @@ td.cur-col .ci.empty { background: rgba(76,175,80,0.04); }
   z-index: 9999 !important;
 }
 
+
+/* ── Affiliate & monetisatie ─────────────────────────────── */
+.affiliate-bar {
+  display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px;
+  padding-top: 12px; border-top: 1px solid var(--border);
+}
+.affiliate-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 7px 14px; border-radius: 20px; font-size: 11px;
+  font-weight: 700; text-decoration: none; cursor: pointer;
+  transition: all .2s; border: 1.5px solid;
+  font-family: 'Outfit', sans-serif;
+}
+.affiliate-btn.seeds {
+  background: rgba(76,175,80,0.1); border-color: rgba(76,175,80,0.35);
+  color: var(--green-bright);
+}
+.affiliate-btn.seeds:hover {
+  background: rgba(76,175,80,0.2); transform: translateY(-1px);
+}
+.affiliate-btn.tools {
+  background: rgba(255,152,0,0.1); border-color: rgba(255,152,0,0.35);
+  color: var(--orange);
+}
+.affiliate-btn.tools:hover {
+  background: rgba(255,152,0,0.2); transform: translateY(-1px);
+}
+.affiliate-btn.kas {
+  background: rgba(66,165,245,0.1); border-color: rgba(66,165,245,0.35);
+  color: var(--blue);
+}
+.affiliate-btn.kas:hover {
+  background: rgba(66,165,245,0.2); transform: translateY(-1px);
+}
+.affiliate-label {
+  font-size: 9px; color: var(--ink-light); letter-spacing: .1em;
+  text-transform: uppercase; margin-bottom: 3px; font-weight: 600;
+}
+
+/* Donatie knop */
+.donate-btn {
+  display: inline-flex; align-items: center; gap: 7px;
+  background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+  color: #fff; border: none; border-radius: 20px;
+  padding: 8px 18px; font-size: 12px; font-weight: 700;
+  cursor: pointer; text-decoration: none;
+  font-family: 'Outfit', sans-serif;
+  box-shadow: 0 2px 12px rgba(238,90,36,0.3);
+  transition: all .2s;
+}
+.donate-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(238,90,36,0.4);
+}
+
+/* Advertentieblok — klaarstaan voor AdSense */
+.ad-slot {
+  width: 100%; min-height: 90px;
+  background: var(--surface2); border: 1px dashed var(--border2);
+  border-radius: var(--radius); display: flex;
+  align-items: center; justify-content: center;
+  color: var(--ink-light); font-size: 11px;
+  margin: 12px 0; letter-spacing: .05em;
+}
+.ad-slot.hidden { display: none; }
+
+/* Gids affiliate kaart */
+.affiliate-card {
+  background: linear-gradient(135deg, rgba(76,175,80,0.06), rgba(56,142,60,0.10));
+  border: 1.5px solid rgba(76,175,80,0.2);
+  border-radius: var(--radius); padding: 18px;
+  grid-column: 1 / -1;
+}
+.affiliate-card h3 { color: var(--green-bright); margin-bottom: 8px; font-size: 14px; }
+.affiliate-shop-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 10px; margin-top: 12px;
+}
+.affiliate-shop {
+  background: var(--surface); border: 1px solid var(--border2);
+  border-radius: 10px; padding: 12px 14px;
+  text-decoration: none; color: inherit;
+  display: flex; flex-direction: column; gap: 4px;
+  transition: all .2s;
+}
+.affiliate-shop:hover {
+  border-color: var(--green-mid); transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+}
+.affiliate-shop-icon { font-size: 22px; }
+.affiliate-shop-name { font-size: 13px; font-weight: 700; color: var(--ink); }
+.affiliate-shop-desc { font-size: 11px; color: var(--ink-light); line-height: 1.4; }
+.affiliate-shop-tag {
+  display: inline-block; margin-top: 4px;
+  font-size: 10px; font-weight: 700; padding: 2px 8px;
+  border-radius: 10px; background: rgba(76,175,80,0.12);
+  color: var(--green-bright); border: 1px solid rgba(76,175,80,0.25);
+}
+
+
+/* ── Kleurwisselaar ─────────────────────────────────── */
+.color-switcher {
+  display: flex; align-items: center; gap: 6px;
+}
+.color-switcher-label {
+  font-size: 10px; color: var(--ink-light);
+  font-weight: 600; letter-spacing: .08em;
+  text-transform: uppercase; white-space: nowrap;
+}
+.color-preset {
+  display: flex; gap: 3px; align-items: center;
+  padding: 5px 10px; border-radius: 20px; cursor: pointer;
+  border: 1.5px solid var(--border2); background: rgba(0,0,0,0.3);
+  transition: all .2s;
+}
+.color-preset:hover { border-color: rgba(255,255,255,0.3); background: rgba(255,255,255,0.1); }
+.color-preset.active { border-color: rgba(255,255,255,0.5); background: rgba(255,255,255,0.15); }
+.color-preset-dot {
+  width: 10px; height: 10px; border-radius: 3px;
+}
+.color-preset-name {
+  font-size: 10px; color: rgba(255,255,255,0.7);
+  font-weight: 600; font-family: 'Outfit', sans-serif;
+}
+
 </style>
       <link rel="icon" href="icon-512.png" type="image/png">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -1157,14 +1292,43 @@ td.cur-col .ci.empty { background: rgba(76,175,80,0.04); }
   <header>
     <h1>🌿 Zaaiplan</h1>
     <span class="subtitle">Moestuin 2025</span>
+    <div class="color-switcher">
+      <span class="color-switcher-label">Kleuren:</span>
+      <button class="color-preset active" id="preset-natuur" onclick="applyPreset('natuur',this)" title="Natuur">
+        <span class="color-preset-dot" style="background:#ff9800"></span>
+        <span class="color-preset-dot" style="background:#4caf50"></span>
+        <span class="color-preset-dot" style="background:#ab47bc"></span>
+        <span class="color-preset-name">Natuur</span>
+      </button>
+      <button class="color-preset" id="preset-mono" onclick="applyPreset('mono',this)" title="Mono">
+        <span class="color-preset-dot" style="background:#ffffff"></span>
+        <span class="color-preset-dot" style="background:#aaaaaa"></span>
+        <span class="color-preset-dot" style="background:#555555"></span>
+        <span class="color-preset-name">Mono</span>
+      </button>
+      <button class="color-preset" id="preset-zacht" onclick="applyPreset('zacht',this)" title="Zacht">
+        <span class="color-preset-dot" style="background:#ffcc80"></span>
+        <span class="color-preset-dot" style="background:#a5d6a7"></span>
+        <span class="color-preset-dot" style="background:#ce93d8"></span>
+        <span class="color-preset-name">Zacht</span>
+      </button>
+    </div>
     <div class="header-actions">
+      <a href="index.html" style="
+        display:inline-flex;align-items:center;gap:5px;
+        color:var(--ink-light);font-size:12px;font-weight:600;
+        text-decoration:none;padding:7px 12px;border-radius:20px;
+        border:1px solid var(--border2);background:var(--surface2);
+        transition:all .2s;
+      " title="Terug naar home">← Home</a>
+      <a class="donate-btn" href="https://ko-fi.com" target="_blank" rel="noopener" title="Steun Zaaiplan">☕ Doneer</a>
       <button class="btn icon-btn" id="installBtn" onclick="installPWA()" title="Zet op startscherm" style="display:none">📲</button>
-      <button class="btn icon-btn" onclick="showSettings()" title="Instellingen">⚙️</button>
+      
     </div>
   </header>
 
   <!-- Save bar hidden, accessible via owner login -->
-  <div id="saveBar" style="display:none">
+  <div id="saveBar" style="display:none!important">
     <span id="saveMsg"></span>
   </div>
 
@@ -1213,7 +1377,11 @@ td.cur-col .ci.empty { background: rgba(76,175,80,0.04); }
     <button class="filter-pill" onclick="setFilter(11,this)">Dec</button>
   </div>
 
-  <div class="legend">
+  <!-- AdSense slot — vul in met je AdSense code zodra goedgekeurd -->
+<div class="ad-slot hidden" id="adSlotTop">
+  <!-- Hier komt jouw Google AdSense code -->
+</div>
+<div class="legend">
     <strong style="font-size:11px">Legenda:</strong>
     <div class="legend-item"><div class="legend-dot sow-dot" style="background:var(--orange)"></div>Zaaien / Planten</div>
     <div class="legend-item"><div class="legend-dot harvest-dot" style="background:var(--green-mid)"></div>Oogsten</div>
@@ -1394,6 +1562,54 @@ td.cur-col .ci.empty { background: rgba(76,175,80,0.04); }
       </div>
 
     </div>
+
+      <!-- Affiliate shops kaart -->
+      <div class="gids-card affiliate-card gids-card-wide">
+        <div class="gids-card-icon">🛒</div>
+        <h3>Aanbevolen winkels</h3>
+        <p style="font-size:12px;color:var(--ink-mid)">Handige webshops voor zaden, gereedschap en kassen — zorgvuldig geselecteerd voor de Nederlandse moestuinier.</p>
+        <div class="affiliate-shop-grid">
+          <a class="affiliate-shop" href="https://www.zaadgoed.nl" target="_blank" rel="noopener">
+            <span class="affiliate-shop-icon">🌱</span>
+            <span class="affiliate-shop-name">Zaadgoed</span>
+            <span class="affiliate-shop-desc">Biologische en zeldzame zaden, ook voor Drenthe geschikt</span>
+            <span class="affiliate-shop-tag">Zaden</span>
+          </a>
+          <a class="affiliate-shop" href="https://www.moestuinland.nl" target="_blank" rel="noopener">
+            <span class="affiliate-shop-icon">🥕</span>
+            <span class="affiliate-shop-name">Moestuinland</span>
+            <span class="affiliate-shop-desc">Groot aanbod groentezaden, pootgoed en tuinbenodigdheden</span>
+            <span class="affiliate-shop-tag">Zaden & gereedschap</span>
+          </a>
+          <a class="affiliate-shop" href="https://www.bol.com/nl/nl/l/tuingereedschap/17601/" target="_blank" rel="noopener">
+            <span class="affiliate-shop-icon">🔧</span>
+            <span class="affiliate-shop-name">Bol.com tuinieren</span>
+            <span class="affiliate-shop-desc">Breed aanbod gereedschap, handschoenen, kruiwagens en meer</span>
+            <span class="affiliate-shop-tag">Gereedschap</span>
+          </a>
+          <a class="affiliate-shop" href="https://www.bol.com/nl/nl/l/kassen/22346/" target="_blank" rel="noopener">
+            <span class="affiliate-shop-icon">🏡</span>
+            <span class="affiliate-shop-name">Kassen — Bol.com</span>
+            <span class="affiliate-shop-desc">Tunnelkassen, foliekassen en uitbreidingen voor elk budget</span>
+            <span class="affiliate-shop-tag">Kassen</span>
+          </a>
+          <a class="affiliate-shop" href="https://www.bakker.com/nl-nl/" target="_blank" rel="noopener">
+            <span class="affiliate-shop-icon">🌸</span>
+            <span class="affiliate-shop-name">Bakker.com</span>
+            <span class="affiliate-shop-desc">Planten, bollen en fruitbomen — ook bestelklaar voor het voorjaar</span>
+            <span class="affiliate-shop-tag">Planten & bomen</span>
+          </a>
+          <a class="affiliate-shop" href="https://www.tuinadvies.nl" target="_blank" rel="noopener">
+            <span class="affiliate-shop-icon">📚</span>
+            <span class="affiliate-shop-name">Tuinadvies.nl</span>
+            <span class="affiliate-shop-desc">Gratis tuinadvies, schema's en tips van Nederlandse experts</span>
+            <span class="affiliate-shop-tag">Advies</span>
+          </a>
+        </div>
+        <div style="font-size:10px;color:var(--ink-light);margin-top:12px;opacity:0.7">
+          ℹ️ Zaaiplan kan een kleine commissie ontvangen via affiliate links, zonder meerkosten voor jou.
+        </div>
+      </div>
   </div><!-- end sectionGids -->
 
 </div>
@@ -1466,6 +1682,7 @@ td.cur-col .ci.empty { background: rgba(76,175,80,0.04); }
     <div class="info-tips" id="infoTips">
       <div class="info-tips-loading">AI tips worden geladen...</div>
     </div>
+    <div id="infoAffiliate" class="affiliate-bar" style="margin-top:8px"></div>
     <div class="mrow" style="margin-top:14px">
       <button class="btn" onclick="refreshInfoTips()">🔄 Opnieuw laden</button>
       <button class="btn primary" onclick="closeInfoModal()">Sluiten</button>
@@ -1825,7 +2042,7 @@ let nextId = SAVED_NEXT_ID;
 let filterM = null;
 let activeCat = 'Alle';
 let activeMainCat = 'Alle';
-let settings = Object.assign({tabMode:true,autoSave:true,theme:'dark',colors:{sow:'#ff9800',harvest:'#4caf50',prune:'#ab47bc'}}, typeof SAVED_SETTINGS!=='undefined' ? SAVED_SETTINGS : {});
+let settings = Object.assign({tabMode:true,autoSave:true,theme:'moestuin',colors:{sow:'#ff9800',harvest:'#4caf50',prune:'#ab47bc'}}, typeof SAVED_SETTINGS!=='undefined' ? SAVED_SETTINGS : {});
 if(!settings.colors) settings.colors={sow:'#ff9800',harvest:'#4caf50',prune:'#ab47bc'};
 if(!settings.theme) settings.theme='dark';
 let AI_CONFIG = Object.assign({provider:'',apiKey:'',model:''}, typeof SAVED_AI_CONFIG!=='undefined' ? SAVED_AI_CONFIG : {});
@@ -1979,6 +2196,24 @@ function _updateFsBtn(){
 }
 document.addEventListener('fullscreenchange', _updateFsBtn);
 document.addEventListener('webkitfullscreenchange', _updateFsBtn);
+
+
+// ── Kleur presets ───────────────────────────────────────────
+const COLOR_PRESETS = {
+  natuur: { sow: '#ff9800', harvest: '#4caf50', prune: '#ab47bc' },
+  mono:   { sow: '#ffffff', harvest: '#aaaaaa', prune: '#555555' },
+  zacht:  { sow: '#ffcc80', harvest: '#a5d6a7', prune: '#ce93d8' },
+};
+function applyPreset(name, btn){
+  const p = COLOR_PRESETS[name];
+  if(!p) return;
+  setColor('sow', p.sow);
+  setColor('harvest', p.harvest);
+  setColor('prune', p.prune);
+  // Update active state
+  document.querySelectorAll('.color-preset').forEach(b => b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+}
 
 // ── Section navigation ─────────────────────────────────────
 function showSection(name, btn) {
@@ -2384,6 +2619,25 @@ function showPlantInfo(id){
   document.getElementById('infoTips').innerHTML = '<div class="info-tips-loading">AI tips worden geladen...</div>';
   document.getElementById('infoModal').classList.add('open');
   loadPlantTips(p);
+  // Affiliate links
+  const aff = document.getElementById('infoAffiliate');
+  if(aff){
+    const q = encodeURIComponent(p.name + ' zaden');
+    const qTool = encodeURIComponent(p.name);
+    aff.innerHTML = `
+      <div style="width:100%">
+        <div class="affiliate-label">🛒 Kopen &amp; bestellen</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px">
+          <a class="affiliate-btn seeds" href="https://www.zaadgoed.nl/search?q=${q}" target="_blank" rel="noopener">🌱 Zaden kopen</a>
+          <a class="affiliate-btn seeds" href="https://www.moestuinland.nl/search?q=${q}" target="_blank" rel="noopener">🌿 Moestuinland</a>
+          <a class="affiliate-btn tools" href="https://www.bol.com/nl/nl/s/?searchtext=${encodeURIComponent(p.name+' tuinieren')}" target="_blank" rel="noopener">🔧 Bol.com</a>
+        </div>
+        <div style="font-size:9px;color:var(--ink-light);margin-top:6px;opacity:0.7">
+          ℹ️ Externe links — Zaaiplan kan een kleine commissie ontvangen
+        </div>
+      </div>
+    `;
+  }
 }
 function closeInfoModal(){
   document.getElementById('infoModal').classList.remove('open');
@@ -2621,6 +2875,15 @@ applyColors();
 updateAIBadge();
 renderCatTabs();
 renderView();
+
+// Open juiste tab op basis van ?tab= parameter in de URL
+try {
+  const urlTab = new URLSearchParams(window.location.search).get('tab');
+  if(urlTab){
+    const tabBtn = document.querySelector('.nav-tab[onclick*="'+urlTab+'"]');
+    showSection(urlTab, tabBtn);
+  }
+} catch(e) {}
 </script>
 </body>
 </html>
