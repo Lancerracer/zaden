@@ -502,7 +502,7 @@ h1 {
   background: var(--surface); padding: 10px 16px; border-radius: var(--radius);
   border: 1px solid var(--border2); box-shadow: 0 2px 8px rgba(0,0,0,0.3);
 }
-.legend-item { display: flex; align-items: center; gap: 8px; font-size: 11px; color: var(--ink-mid); font-weight: 500; }
+.legend-item { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #a5d6a7; font-weight: 600; }
 .legend-dot { width: 26px; height: 14px; border-radius: 4px; flex-shrink: 0; }
 
 /* ── Table ── */
@@ -512,11 +512,11 @@ h1 {
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-lg), var(--glow);
 }
-table { border-collapse: collapse; font-size: 13px; min-width: 100%; }
+table { border-collapse: collapse; font-size: 13px; min-width: 100%; border-spacing: 0; }
 thead th {
   padding: 12px 4px; text-align: center;
   font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 12px;
-  letter-spacing: .05em; text-transform: uppercase; color: var(--ink-mid);
+  letter-spacing: .05em; text-transform: uppercase; color: #a5d6a7;
   border-bottom: 1px solid var(--border2); white-space: nowrap;
   position: sticky; top: 0; background: var(--surface2); z-index: 10;
 }
@@ -540,7 +540,7 @@ tr.plant-prune:hover td, tr.plant-harvest:hover td { background: var(--surface2)
 tr.plant-harvest { border-bottom: 1px solid rgba(30,46,30,0.8); }
 
 td.pname {
-  padding: 5px 8px 5px 12px; white-space: nowrap;
+  padding: 4px 8px 4px 12px; white-space: nowrap;
   position: sticky; left: 0; background: var(--surface);
   border-right: 1px solid var(--border2); z-index: 5;
   vertical-align: middle; transition: background .15s;
@@ -562,7 +562,7 @@ td.pname {
 tr:hover .del-btn { opacity: .4; }
 .del-btn:hover { opacity: 1 !important; }
 
-td.mcell { padding: 3px 3px; text-align: center; width: 42px; min-width: 42px; max-width: 42px; cursor: pointer; user-select: none; }
+td.mcell { padding: 2px 2px; text-align: center; width: 38px; min-width: 38px; max-width: 38px; cursor: pointer; user-select: none; }
 .ci {
   width: 32px; height: 20px; border-radius: 5px;
   margin: 0 auto; transition: all .15s;
@@ -971,7 +971,7 @@ td.cur-col .ci.empty { background: rgba(76,175,80,0.04); }
 [data-theme="moestuin"] .gids-card p, [data-theme="moestuin"] .gids-card li { color: #4a3018; }
 [data-theme="moestuin"] .stat-num { color: #3d6b2e; }
 [data-theme="moestuin"] .settings-section h3 { color: #3d6b2e; }
-[data-theme="moestuin"] .legend span { color: #6b5740; }
+[data-theme="moestuin"] .legend span { color: #4a6b2a; }
 [data-theme="moestuin"] .filter-label { color: #8a6838; }
 [data-theme="moestuin"] thead th { color: #4a3018; }
 [data-theme="moestuin"] .info-tips h3 { color: #3d6b2e; }
@@ -1290,7 +1290,7 @@ td.cur-col .ci.empty { background: rgba(76,175,80,0.04); }
   text-shadow: 0 1px 2px rgba(255,255,255,0.3);
 }
 [data-theme="moestuin"] thead th {
-  color: #3a2510 !important;
+  color: #2a4a18 !important;
   font-weight: 800;
 }
 [data-theme="moestuin"] .filter-pill {
@@ -1306,6 +1306,9 @@ td.cur-col .ci.empty { background: rgba(76,175,80,0.04); }
   font-weight: 800;
   text-shadow: 0 1px 3px rgba(255,255,255,0.2);
 }
+
+
+[data-theme="moestuin"] .legend-item { color: #3a5a20 !important; font-weight: 700; }
 
 </style>
       <link rel="icon" href="icon-512.png" type="image/png">
@@ -1325,9 +1328,9 @@ td.cur-col .ci.empty { background: rgba(76,175,80,0.04); }
         <span class="color-preset-name">Natuur</span>
       </button>
       <button class="color-preset" id="preset-mono" onclick="applyPreset('mono',this)" title="Mono">
-        <span class="color-preset-dot" style="background:#ffffff"></span>
-        <span class="color-preset-dot" style="background:#aaaaaa"></span>
-        <span class="color-preset-dot" style="background:#555555"></span>
+        <span class="color-preset-dot" style="background:#e0e0e0"></span>
+        <span class="color-preset-dot" style="background:#888888"></span>
+        <span class="color-preset-dot" style="background:#111111"></span>
         <span class="color-preset-name">Mono</span>
       </button>
       <button class="color-preset" id="preset-zacht" onclick="applyPreset('zacht',this)" title="Zacht">
@@ -1410,7 +1413,6 @@ td.cur-col .ci.empty { background: rgba(76,175,80,0.04); }
     <div class="legend-item"><div class="legend-dot sow-dot" style="background:var(--orange)"></div>Zaaien / Planten</div>
     <div class="legend-item"><div class="legend-dot harvest-dot" style="background:var(--green-mid)"></div>Oogsten</div>
     <div class="legend-item"><div class="legend-dot prune-dot" style="background:var(--purple-mid)"></div>Snoeien</div>
-    <span style="font-size:10px;color:var(--ink-light)">· Naam = meer info · Cellen = aan/uit</span>
   </div>
 
   <div class="table-wrap">
@@ -2225,7 +2227,7 @@ document.addEventListener('webkitfullscreenchange', _updateFsBtn);
 // ── Kleur presets ───────────────────────────────────────────
 const COLOR_PRESETS = {
   natuur: { sow: '#ff9800', harvest: '#4caf50', prune: '#ab47bc' },
-  mono:   { sow: '#ffffff', harvest: '#aaaaaa', prune: '#555555' },
+  mono:   { sow: '#e0e0e0', harvest: '#888888', prune: '#111111' },
   zacht:  { sow: '#ffcc80', harvest: '#a5d6a7', prune: '#ce93d8' },
 };
 function applyPreset(name, btn){
