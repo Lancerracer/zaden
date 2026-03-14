@@ -196,6 +196,12 @@
   
 }
 [data-theme="moestuin"] .app { position: relative; z-index: 2; }
+[data-theme="moestuin"] #sectionPlattegrond {
+  position: relative; z-index: 10;
+}
+[data-theme="moestuin"] #sectionPlattegrond iframe {
+  position: relative; z-index: 10;
+}
 [data-theme="moestuin"] #toast { z-index: 302; }
 [data-theme="moestuin"] .modal-overlay { z-index: 200; }
 
@@ -1122,22 +1128,24 @@ td.cur-col .ci.empty { background: rgba(76,175,80,0.04); }
 }
 
 
-#sectionPlattegrond:fullscreen {
-  height: 100vh !important;
-  background: #fff;
-}
+#sectionPlattegrond:fullscreen,
 #sectionPlattegrond:-webkit-full-screen {
   height: 100vh !important;
+  width: 100vw !important;
+  background: #f5f0e8;
+  overflow: hidden !important;
 }
 #sectionPlattegrond:fullscreen iframe,
 #sectionPlattegrond:-webkit-full-screen iframe {
   height: 100vh !important;
+  width: 100% !important;
 }
 #sectionPlattegrond:fullscreen #fsBtn,
 #sectionPlattegrond:-webkit-full-screen #fsBtn {
-  position: fixed;
-  top: 12px;
-  right: 12px;
+  position: fixed !important;
+  top: 12px !important;
+  right: 12px !important;
+  z-index: 9999 !important;
 }
 
 </style>
@@ -1952,27 +1960,25 @@ function closeIosInstall(){
 
 // ── Plattegrond fullscreen ──────────────────────────────────
 function togglePlattegrondFS(){
-  const frame = document.getElementById('plattegrondFrame');
   const btn = document.getElementById('fsBtn');
-  if(!document.fullscreenElement){
-    const el = document.getElementById('sectionPlattegrond');
-    if(el.requestFullscreen){ el.requestFullscreen(); }
-    else if(el.webkitRequestFullscreen){ el.webkitRequestFullscreen(); }
-    btn.textContent = '✕';
-    btn.title = 'Volledig scherm sluiten';
+  const el = document.getElementById('sectionPlattegrond');
+  if(!document.fullscreenElement && !document.webkitFullscreenElement){
+    const req = el.requestFullscreen || el.webkitRequestFullscreen || el.mozRequestFullScreen;
+    if(req) req.call(el);
   } else {
-    if(document.exitFullscreen){ document.exitFullscreen(); }
-    else if(document.webkitExitFullscreen){ document.webkitExitFullscreen(); }
-    btn.textContent = '⛶';
-    btn.title = 'Volledig scherm';
+    const exit = document.exitFullscreen || document.webkitExitFullscreen || document.mozCancelFullScreen;
+    if(exit) exit.call(document);
   }
 }
-document.addEventListener('fullscreenchange', () => {
+function _updateFsBtn(){
   const btn = document.getElementById('fsBtn');
-  if(btn){
-    btn.textContent = document.fullscreenElement ? '✕' : '⛶';
-  }
-});
+  if(!btn) return;
+  const isFS = !!(document.fullscreenElement || document.webkitFullscreenElement);
+  btn.textContent = isFS ? '✕' : '⛶';
+  btn.title = isFS ? 'Volledig scherm sluiten' : 'Volledig scherm';
+}
+document.addEventListener('fullscreenchange', _updateFsBtn);
+document.addEventListener('webkitfullscreenchange', _updateFsBtn);
 
 // ── Section navigation ─────────────────────────────────────
 function showSection(name, btn) {
